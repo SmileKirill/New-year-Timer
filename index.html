@@ -19,11 +19,7 @@
   main{padding:80px 18px 120px 18px;max-width:1100px;margin:0 auto;position:relative;z-index:2}
   #timer{font-size:clamp(36px,8vw,88px);text-align:center;margin-top:8px;font-weight:800;text-shadow:0 0 14px rgba(255,255,255,0.15);z-index:10;position:relative}
   
-  /* Background gif for kookoo */
-  .kookoo-bg{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0.6;z-index:5;pointer-events:none;display:none}
-  .kookoo-bg.active{display:block}
-  
-  /* kookoo container */
+
   .kookoo-wrapper{position:relative;width:240px;height:240px;margin:18px auto 0;z-index:25}
   .kookoo-background-image{position:absolute;width:240px;height:240px;left:50%;top:50%;transform:translate(-50%, -50%);z-index:0;pointer-events:none}
   .kookoo-background-image img{width:100%;height:100%;object-fit:contain}
@@ -33,7 +29,7 @@
   .kookoo-gif{position:absolute;width:260px;height:260px;left:50%;top:50%;transform:translate(-50%,-50%);object-fit:contain;pointer-events:none;z-index:3}
   .kookoo-timer{position:absolute;left:50%;top:50%;transform:translate(-50%,-10%);text-align:center;font-weight:800;color:#65bbfd;text-shadow:0 0 18px rgba(129, 204, 255, 0.9);font-size:20px;pointer-events:none;z-index:4}
   
-  /* calendar */
+
   .calendar{margin-top:48px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
   .day{background:#191919;padding:22px;border-radius:10px;text-align:center;font-size:18px;cursor:pointer;user-select:none;transition:transform .12s ease}
   .day:active{transform:translateY(2px)}
@@ -41,10 +37,10 @@
   .day.opened{background:#1a3a1a;border:2px solid #2d5;position:relative}
   .day.opened::after{content:'✓';position:absolute;top:4px;right:8px;color:#2d5;font-size:16px;font-weight:bold}
   
-  /* footer mini */
+
   footer{position:fixed;left:0;bottom:0;width:100%;height:44px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-weight:700;z-index:40}
   
-  /* FX elements */
+
   .fx { position:fixed; top:-20px; pointer-events:none; user-select:none; z-index:18; opacity:0.95; }
   .fx.snow{ font-size:18px; color:#eaf6ff; text-shadow:0 0 6px rgba(120,200,255,0.6) }
   .fx.rain{ font-size:22px; color:#bfe7ff; opacity:0.9 }
@@ -90,8 +86,8 @@
   @keyframes rainFall {
     to { transform: translateY(120vh); opacity:0.1; }
   }
-  
-  /* Neon Glow Timer */
+
+
   #timer.neon {
     color:#0ff;
     text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff, 0 0 80px #0ff, 0 0 120px #0ff;
@@ -101,8 +97,8 @@
     0%, 100% { opacity:1 }
     50% { opacity:0.85 }
   }
-  
-  /* Pixel Art Timer */
+
+
   #timer.pixel {
     font-family:monospace;
     color:#0f0;
@@ -110,7 +106,7 @@
     image-rendering:pixelated;
   }
   
-  /* Galaxy effect container */
+
   .galaxy-vortex {
     position:fixed;
     top:50%;
@@ -125,7 +121,7 @@
     pointer-events:none;
   }
   
-  /* Fire timer */
+
   #timer.fire {
     color:#ff6b35;
     text-shadow: 0 0 20px #ff6b35, 0 0 40px #ff4500, 0 0 60px #ff0000;
@@ -136,21 +132,154 @@
     100% { text-shadow: 0 0 25px #ff4500, 0 0 50px #ff0000, 0 0 70px #8b0000; }
   }
   
-  /* Sorrow timer */
+
   #timer.sorrow {
     color:#6b9bd1;
     text-shadow: 0 0 15px rgba(107, 155, 209, 0.8);
+
+
+#timer.minecraft {
+  font-family:'Courier New', monospace;
+  color:#5c3a21;
+  text-shadow: 3px 3px 0 #000, 0 0 20px rgba(92, 58, 33, 0.8);
+  font-weight: 900;
+}
+
+
+#timer.demonslayer {
+  font-family:'Georgia', serif;
+  color:#ff1744;
+  text-shadow: 0 0 20px #ff1744, 0 0 40px #f50057, 0 0 60px #c51162, 2px 2px 0 #000;
+  animation: breathingGlow 2s ease-in-out infinite;
+}
+
+@keyframes breathingGlow {
+  0%, 100% { text-shadow: 0 0 20px #ff1744, 0 0 40px #f50057, 0 0 60px #c51162, 2px 2px 0 #000; }
+  50% { text-shadow: 0 0 30px #ff1744, 0 0 60px #f50057, 0 0 90px #c51162, 2px 2px 0 #000; }
+}
+
+
+
+.fx.minecraft-block {
+  font-size:24px;
+  opacity:0.8;
+}
+
+.fx.sakura {
+  font-size:16px;
+  color:#ffb7c5;
+  opacity:0.9;
+}
+
+@keyframes sakuraFloat {
+  to { transform: translateY(100vh) translateX(50px) rotate(360deg); opacity:0; }
+}
   }
+
+.music-player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.music-player:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.music-icon {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.music-player.playing .music-icon {
+  animation: musicPulse 1s infinite;
+}
+
+@keyframes musicPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.music-text {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Стили для уведомления о музыке */
+.music-notice {
+  position: fixed;
+  bottom: 20px;
+  left: -300px; /* Прячем за экран слева */
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 100;
+  transition: left 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.music-notice.active {
+  left: 20px; /* Показываем */
+}
+
+.disc-wrapper {
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.disc {
+  animation: discSpin 3s linear infinite;
+}
+
+@keyframes discSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.track-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.track-label {
+  font-size: 10px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.track-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
 </style>
+<audio id="bg-music" loop></audio>
 </head>
 <body>
 
-<!-- Background gif for KooKoo (hidden by default) -->
+
 <img id="kookoo-bg" class="kookoo-bg" src="kookoo_background.gif" alt="background">
 
 <header>
   <div class="brand">NY Timer</div>
   <div style="display:flex;gap:12px;align-items:center">
+    <div class="music-player" onclick="toggleMusic()" title="Музыка">
+      <span class="music-icon">🎵</span>
+      <span class="music-text">Музыка</span>
+    </div>
     <div class="burger" onclick="toggleMenu()">
       <span></span><span></span><span></span>
     </div>
@@ -167,23 +296,116 @@
   <button onclick="setSkin('galaxy')">🌌 Galaxy Clock</button>
   <button onclick="setSkin('sorrow')">🌧️ Sorrow</button>
   <button onclick="setSkin('fire')">🔥 Firestorm</button>
+  <button onclick="setSkin('minecraft')">⛏️ Minecraft</button>
+  <button onclick="setSkin('demonslayer')">⚔️ Demon Slayer</button>
 </div>
 
 <main>
   <div id="timer">Загрузка...</div>
 
   <div class="calendar" id="calendar">
-    <!-- days will be injected -->
+
   </div>
 </main>
 
 <footer id="footer-text">…скоро</footer>
 
 <script>
-  // MENU toggle
+
   function toggleMenu(){ document.getElementById('menu').classList.toggle('open'); }
 
-  // Timer -> counts to Jan 1 of next year
+// Музыкальная система
+const musicTracks = {
+  default: 'default.mp3',
+  kookoo: 'kookoo.mp3',
+  minecraft: 'minecraft.mp3',
+  demonslayer: 'demonslayer.mp3',
+  neon: 'neon.mp3',
+  pixel: 'pixel.mp3',
+  starfield: 'starfield.mp3',
+  galaxy: 'galaxy.mp3',
+  sorrow: 'sorrow.mp3',
+  fire: 'fire.mp3'
+};
+
+const trackNames = {
+  default: 'Christmas bells',
+  kookoo: 'BEYOND THE SURFACE',
+  minecraft: 'C418 — Sweden',
+  demonslayer: 'Kamado Tanjiro no Uta',
+  neon: 'M.O.O.N - Dust',
+  pixel: 'Toby fox - Snowdin town',
+  starfield: 'Stargazing With Anomalous Intent',
+  galaxy: 'Interstellar - S.T.A.Y',
+  sorrow: 'Silent Hill 2 - Promise',
+  fire: 'A Fire In Your Mind'
+};
+
+let currentSkin = 'default';
+let isMusicPlaying = false;
+const audio = document.getElementById('bg-music');
+
+function toggleMusic() {
+    const player = document.querySelector('.music-player');
+    
+    if (isMusicPlaying) {
+        audio.pause();
+        player.classList.remove('playing');
+        isMusicPlaying = false;
+        // При желании можно скрывать окошко сразу:
+        document.getElementById('music-notice').classList.remove('active');
+    } else {
+        isMusicPlaying = true;
+        player.classList.add('playing');
+        playMusicForSkin(currentSkin); 
+        
+        // ВОТ ЭТА СТРОЧКА: показываем название при включении
+        showMusicNotice(currentSkin);
+    }
+}
+
+function playMusicForSkin(skin) {
+    if (musicTracks[skin]) {
+        const newSrc = musicTracks[skin];
+        const currentSrc = audio.getAttribute('src');
+        
+        if (currentSrc !== newSrc) {
+            audio.src = newSrc;
+            // Принудительно включаем бесконечный повтор при каждой смене трека
+            audio.loop = true; 
+            audio.load();
+            
+            if (isMusicPlaying) {
+                showMusicNotice(skin);
+            }
+        }
+
+        if (isMusicPlaying) {
+            audio.play().catch(err => {
+                console.error('Ошибка воспроизведения:', err);
+                document.querySelector('.music-player').classList.remove('playing');
+                isMusicPlaying = false;
+            });
+        }
+    }
+}
+
+// Функция для показа окошка
+function showMusicNotice(skin) {
+    const notice = document.getElementById('music-notice');
+    const title = document.getElementById('track-name');
+    
+    // Ставим название из нашего списка
+    title.textContent = trackNames[skin] || 'Неизвестный трек';
+    
+    // Показываем окошко
+    notice.classList.add('active');
+    
+    // Прячем через 5 секунд
+    setTimeout(() => {
+        notice.classList.remove('active');
+    }, 5000);
+}
   function computeTarget(){
     const now = new Date();
     const nextYear = now.getFullYear() + 1;
@@ -201,7 +423,7 @@
   }
   setInterval(updateTimer,1000); updateTimer();
 
-  // Calendar render
+
   const calendarEl = document.getElementById('calendar');
   const openedDays = JSON.parse(localStorage.getItem('openedDays') || '[]');
   
@@ -261,7 +483,7 @@
       19: "Вот и очередная пятница! Завтра уже выходные, отдыхай и не забывай про меня :)",
       20: "Суббота, как насчет погулять с ребятами? Или может еще что выдумать...",
       21: "Я всегда видел Воскресенье как самый ленивый день, но если не лень гуляй и играй с ребятами, я уверен они хотят тебя видеть!",
-      22: "Последняя неделя, последний рывок, ни шагу назад, только вперед, я в тебя верю!",
+      22: "Последняя неделя, последний рывок, ни шагу назад, только вперед, я в тебя верю! С днем рождения, Хёка!",
       23: "Обними своих любимых людей, питомцев, скажи как они важны для тебя, каждый был бы рад это услышать!",
       24: "Ты смотри, вот и половина недели прошло, да? Время летит...",
       25: "Что было первое, курица или яйцо? Да хотя какая разница, главное что ты умничка и почти справился!",
@@ -296,24 +518,31 @@
     "Почему слепой мальчик уронил мороженное? Потому что его сбила фура!",
     "Интересный факт: Аяна древне казахская богиня зимы и холода! И это даже не я написал, а ии сам вставил!",
     "Интересный факт: Аяна древне казахская итальянка",
-    "Аяна написала 2 аушки по нам: ЗАБЫТЫЙ ОСОБНЯК БАЛЬМСТЕР, и ХРОНИКИ ПАДШИХ, ну и также еще бесчисленное количество рисуночков!"
+    "Аяна написала 4 аушки по нам: ЗАБЫТЫЙ ОСОБНЯК БАЛЬМСТЕР, и ХРОНИКИ ПАДШИХ, Мафия АУ,Совместная жизнь АУ,ну и также еще бесчисленное количество рисуночков!",
+    "Как то на улице я увидел 2 парней в одинаковой одежде, подошел и спросил не геи ли они, они меня арестовали...",
+    "Когда нибудь мы это повторим....https://vm.tiktok.com/ZMSXp6pok/",
+    "'Зато я петух...'",
+    "Юки, иди кушай, и нормально!",
+    "Интересный факт: У нас в группе есть правила! Вы об этом не знали? Я тоже!"
     
   ];
   function updatePhrase(){ document.getElementById('footer-text').textContent = phrases[Math.floor(Math.random()*phrases.length)]; }
   setInterval(updatePhrase,15000); updatePhrase();
 
-  /* ========== EFFECTS / SKINS ========== */
+
   let fxInterval = null;
   let fxInterval2 = null;
   
-  function clearFX(){
-    console.log('clearFX');
-    document.querySelectorAll('.fx').forEach(n=>n.remove());
-    if(fxInterval){ clearInterval(fxInterval); fxInterval = null; }
-    if(fxInterval2){ clearInterval(fxInterval2); fxInterval2 = null; }
-    document.querySelectorAll('.galaxy-vortex, .neon-circles').forEach(el => el.remove());
-    document.getElementById('kookoo-bg').classList.remove('active');
-  }
+function clearFX(){
+  console.log('clearFX');
+  document.querySelectorAll('.fx').forEach(n=>n.remove());
+  if(fxInterval){ clearInterval(fxInterval); fxInterval = null; }
+  if(fxInterval2){ clearInterval(fxInterval2); fxInterval2 = null; }
+  document.querySelectorAll('.galaxy-vortex, .neon-circles').forEach(el => el.remove());
+  
+  // НЕ останавливаем музыку при смене скина - она продолжает играть
+}
+
 
   function spawnFX(type){
     const interval = setInterval(()=>{
@@ -376,6 +605,17 @@
         el.style.top = (Math.random()*100)+'vh';
         el.style.animation = `neonLineSweep ${2 + Math.random()*2}s linear forwards`;
       }
+      else if(type==='minecraft-block'){
+  el.className = 'fx minecraft-block';
+  el.textContent = ['🟫','🟩','⬛','🟦'][Math.floor(Math.random()*4)];
+  el.style.fontSize = (20 + Math.random()*16)+'px';
+}
+else if(type==='sakura'){
+  el.className = 'fx sakura';
+  el.textContent = '🌸';
+  el.style.fontSize = (14 + Math.random()*10)+'px';
+  el.style.animation = `sakuraFloat ${4 + Math.random()*3}s ease-out forwards`;
+}
 
       const left = Math.random()*100;
       el.style.left = left + 'vw';
@@ -510,28 +750,53 @@
     spawnFX('galaxy');
   }
 
-  function setSkin(type){
-    console.log('setSkin', type);
-    clearFX();
-    
-    const timer = document.getElementById('timer');
-    timer.className = '';
-    
-    if(type === 'kookoo') return applyKooKoo();
-    if(type === 'default') return applyDefault();
-    if(type === 'sorrow') return applySorrow();
-    if(type === 'fire') return applyFire();
-    if(type === 'neon') return applyNeon();
-    if(type === 'pixel') return applyPixel();
-    if(type === 'starfield') return applyStarfield();
-    if(type === 'galaxy') return applyGalaxy();
-  }
+function applyMinecraft(){
+  console.log('applyMinecraft');
+  clearFX();
+  const timer = document.getElementById('timer');
+  timer.style.display = '';
+  timer.className = 'minecraft';
+  const wrap = document.getElementById('kookoo-wrapper');
+  if(wrap) wrap.style.display='none';
+  document.body.style.background = '#87CEEB';
+  spawnFX('minecraft-block');
+}
+
+function applyDemonSlayer(){
+  console.log('applyDemonSlayer');
+  clearFX();
+  const timer = document.getElementById('timer');
+  timer.style.display = '';
+  timer.className = 'demonslayer';
+  const wrap = document.getElementById('kookoo-wrapper');
+  if(wrap) wrap.style.display='none';
+  document.body.style.background = 'linear-gradient(135deg, #1a0033 0%, #4a0066 50%, #1a0033 100%)';
+  spawnFX('sakura');
+}
+
+function setSkin(type){
+  console.log('setSkin', type);
+  clearFX();
+  
+  const timer = document.getElementById('timer');
+  timer.className = '';
+  
+  currentSkin = type; // Сохраняем текущий скин
+  playMusicForSkin(type); // Переключаем музыку
+  
+  if(type === 'kookoo') return applyKooKoo();
+  if(type === 'default') return applyDefault();
+  if(type === 'sorrow') return applySorrow();
+  if(type === 'fire') return applyFire();
+  if(type === 'neon') return applyNeon();
+  if(type === 'pixel') return applyPixel();
+  if(type === 'starfield') return applyStarfield();
+  if(type === 'galaxy') return applyGalaxy();
+  if(type === 'minecraft') return applyMinecraft();
+  if(type === 'demonslayer') return applyDemonSlayer();
+}
 
   setSkin('default');
-
-  /* =========================
-      NEW KOO-KOO SYSTEM
-   ========================= */
 
   let kookooState = "count"; 
 
@@ -540,7 +805,6 @@
 
     clearFX();
     
-    // Включаем фоновую гифку
     document.getElementById('kookoo-bg').classList.add('active');
     document.body.style.background = '#0a0520';
 
@@ -621,5 +885,14 @@
     }
   }
 </script>
+<div id="music-notice" class="music-notice">
+  <div class="disc-wrapper">
+    <div class="disc">💿</div>
+  </div>
+  <div class="track-info">
+    <div class="track-label">Сейчас играет</div>
+    <div id="track-name" class="track-title">Название трека</div>
+  </div>
+</div>
 </body>
 </html>
