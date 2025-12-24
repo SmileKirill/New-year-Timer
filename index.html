@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>NY Timer — prototype</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -39,7 +39,28 @@
   .day.opened::after{content:'✓';position:absolute;top:4px;right:8px;color:#2d5;font-size:16px;font-weight:bold}
   
 
-  footer{position:fixed;left:0;bottom:0;width:100%;height:44px;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-weight:700;z-index:40}
+  footer{position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    /* Используем переменную безопасной зоны + запас 10px */
+    height: calc(44px + env(safe-area-inset-bottom)); 
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    z-index: 40;
+    /* Текст внутри футера центрируем с учетом отступа снизу */
+    padding-bottom: env(safe-area-inset-bottom);
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;}
+
+    #footer-text {
+    font-size: 14px;
+    line-height: 1.2;
+}
   
 
   .fx { position:fixed; top:-20px; pointer-events:none; user-select:none; z-index:18; opacity:0.95; }
@@ -556,9 +577,50 @@
         0 0 40px rgba(0, 242, 255, 0.7); /* 4. Мягкое рассеивание в пустоту */
 
 
-    background: rgba(0, 10, 30, 0.8);
-    padding: 20px 50px;
-    backdrop-filter: blur(10px);
+}
+
+/* ТАЙМЕР DEMON SLAYER */
+#timer.demonslayer-style {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; /* Или 'Georgia', если хочешь более классический вид */
+    font-weight: 900;
+    color: #fff;
+    font-size: clamp(40px, 10vw, 95px);
+    
+    /* Эффект пламени и крови */
+    text-shadow: 
+        0 0 10px #ff1744, 
+        0 0 20px #ff1744, 
+        0 0 40px #b71c1c,
+        4px 4px 0px #000; /* Черный контур для четкости */
+    
+    background: rgba(20, 0, 0, 0.6);
+    padding: 15px 40px;
+    border-left: 5px solid #ff1744;
+    border-right: 5px solid #ff1744;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    animation: breathingGlow 2.5s ease-in-out infinite;
+}
+
+/* Эффект искр внутри таймера */
+#timer.demonslayer-style::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 45%, rgba(255, 23, 68, 0.2) 50%, transparent 55%);
+    background-size: 200% 200%;
+    animation: bladeShine 3s infinite;
+}
+
+@keyframes breathingGlow {
+    0%, 100% { transform: scale(1); text-shadow: 0 0 10px #ff1744, 0 0 20px #ff1744, 0 0 40px #b71c1c, 4px 4px 0px #000; }
+    50% { transform: scale(1.02); text-shadow: 0 0 20px #ff1744, 0 0 40px #ff1744, 0 0 60px #ff5252, 4px 4px 0px #000; }
+}
+
+@keyframes bladeShine {
+    0% { background-position: -200% -200%; }
+    100% { background-position: 200% 200%; }
 }
 
 /* СТИЛЬ ДЛЯ GALAXY: "Голограмма" */
@@ -627,6 +689,8 @@
 <footer id="footer-text">…скоро</footer>
 
 <script>
+
+  let musicNoticeTimer = null; // Переменная для хранения таймера уведомления
 
   function toggleMenu(){ document.getElementById('menu').classList.toggle('open'); }
 
@@ -711,15 +775,21 @@ function showMusicNotice(skin) {
     const notice = document.getElementById('music-notice');
     const title = document.getElementById('track-name');
     
-    // Ставим название из нашего списка
+    // 1. Очищаем старый таймер, если он уже был запущен
+    if (musicNoticeTimer) {
+        clearTimeout(musicNoticeTimer);
+    }
+
+    // 2. Ставим название трека
     title.textContent = trackNames[skin] || 'Неизвестный трек';
     
-    // Показываем окошко
+    // 3. Показываем окошко
     notice.classList.add('active');
     
-    // Прячем через 5 секунд
-    setTimeout(() => {
+    // 4. Запускаем новый таймер на 5 секунд
+    musicNoticeTimer = setTimeout(() => {
         notice.classList.remove('active');
+        musicNoticeTimer = null; // Обнуляем после завершения
     }, 5000);
 }
   function computeTarget(){
@@ -801,7 +871,7 @@ function showMusicNotice(skin) {
       21: "Я всегда видел Воскресенье как самый ленивый день, но если не лень гуляй и играй с ребятами, я уверен они хотят тебя видеть!",
       22: "Последняя неделя, последний рывок, ни шагу назад, только вперед, я в тебя верю! С днем рождения, Хёка!",
       23: "Обними своих любимых людей, питомцев, скажи как они важны для тебя, каждый был бы рад это услышать!",
-      24: "Ты смотри, вот и половина недели прошло, да? Время летит...",
+      24: "Ты смотри, вот и половина недели прошло, да? И к слову наконец то Особняк Бальмстер вышел, молодец Аяна что доделала его!",
       25: "Что было первое, курица или яйцо? Да хотя какая разница, главное что ты умничка и почти справился!",
       26: "Вот он, последний день рабочей недели (я как минимум надеюсь что у тебя так!) всего ничего до нового года, ты молодец!",
       27: "Вот и последняя суббота в этом году, гулять будешь? Или может в дискорде соберетесь?",
@@ -839,8 +909,11 @@ function showMusicNotice(skin) {
     "Когда нибудь мы это повторим....https://vm.tiktok.com/ZMSXp6pok/",
     "'Зато я петух...'",
     "Юки, иди кушай, и нормально!",
-    "Интересный факт: У нас в группе есть правила! Вы об этом не знали? Я тоже!"
-    
+    "Интересный факт: У нас в группе есть правила! Вы об этом не знали? Я тоже!",
+    "Забытый особняк Бальмстер - это имба!",
+    "Элиф (или же как я называю лиф), наш лучший фотограф >:3",
+    "Ильяс работал на заводе💀💀",
+    "Веня и Лимон мне обещали косплей на байкера, но оба так и не сделали, ходите оглядывайтесь...",
   ];
   function updatePhrase(){ document.getElementById('footer-text').textContent = phrases[Math.floor(Math.random()*phrases.length)]; }
   setInterval(updatePhrase,15000); updatePhrase();
@@ -1191,10 +1264,12 @@ function applyMinecraft() {
 function applyDemonSlayer() {
     clearFX();
     const timer = document.getElementById('timer');
-    timer.style.display = ''; timer.className = 'demon-slayer';
-    document.body.style.background = '#1a0a1a';
-    
-    // САКУРА ПАДАЕТ ЧАЩЕ (интервал 300мс вместо 4000мс)
+    timer.style.display = ''; 
+    timer.className = 'demonslayer-style'; // ПРИМЕНЯЕМ НОВЫЙ КЛАСС
+
+    document.body.style.background = '#0d0204'; // Глубокий темно-красный фон
+
+    // Интенсивная сакура (как мы делали раньше)
     fxInterval = setInterval(() => {
         const leaf = document.createElement('div');
         leaf.className = 'sakura fx';
@@ -1202,23 +1277,27 @@ function applyDemonSlayer() {
         leaf.style.top = '-20px';
         document.body.appendChild(leaf);
         
-        const fallTime = 4000 + Math.random() * 4000;
+        const fallTime = 3000 + Math.random() * 3000;
         leaf.animate([
-            { transform: 'translateY(0) rotate(0deg) translateX(0)', opacity: 0.8 },
-            { transform: `translateY(110vh) rotate(${Math.random() * 1000}deg) translateX(${Math.random() * 100 - 50}px)`, opacity: 0 }
-        ], { duration: fallTime, easing: 'linear' }).onfinish = () => leaf.remove();
-    }, 300); 
+            { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+            { transform: `translateY(110vh) rotate(${Math.random() * 720}deg) translateX(50px)`, opacity: 0 }
+        ], { duration: fallTime }).onfinish = () => leaf.remove();
+    }, 250); // Частый листопад
 
     // Разрезы мечом
     fxInterval2 = setInterval(() => {
         const slash = document.createElement('div');
         slash.className = 'sword-slash fx';
         slash.style.top = Math.random() * 100 + 'vh';
-        slash.style.left = Math.random() * 30 + 'vw';
-        slash.style.transform = `rotate(${(Math.random() - 0.5) * 45}deg)`;
+        slash.style.left = Math.random() * 20 + 'vw';
+        slash.style.transform = `rotate(${Math.random() * 360}deg)`;
         document.body.appendChild(slash);
-        slash.animate([{ width: '0', opacity: 1 }, { width: '70vw', opacity: 0 }], 200).onfinish = () => slash.remove();
-    }, 4000);
+        
+        slash.animate([
+            { width: '0', opacity: 1 },
+            { width: '80vw', opacity: 0 }
+        ], 300).onfinish = () => slash.remove();
+    }, 2000);
 }
 
 function setSkin(type){
