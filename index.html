@@ -2633,7 +2633,110 @@ function activateTimerSnow() {
 // МНОГОРАЗОВЫЕ ЭФФЕКТЫ
 // ============================================
 
+// ============================================
+// ОБНОВЛЕННЫЕ МНОГОРАЗОВЫЕ ЭФФЕКТЫ (СИНХРОННЫЕ)
+// ============================================
+
 function clickMultiUse(type) {
+    const ref = db.ref('multi_use/' + type);
+    const triggerRef = db.ref('triggers/' + type); // Отдельная ветка для запуска событий
+
+    ref.transaction((count) => {
+        const configs = {
+            'firework': { max: 30, name: 'салюта', color: '#ff5722' },
+            'gifts': { max: 25, name: 'подарков', color: '#e91e63' },
+            'confetti': { max: 20, name: 'конфетти', color: '#9c27b0' },
+            'lightning': { max: 35, name: 'молний', color: '#ffeb3b' },
+            'starfall': { max: 28, name: 'звездопада', color: '#ffc107' },
+            'balloons': { max: 22, name: 'шаров', color: '#03a9f4' }
+        };
+
+        const config = configs[type];
+        const newCount = (count || 0) + 1;
+
+        if (newCount >= config.max) {
+            // Если достигли максимума:
+            // 1. Записываем в базу сигнал запуска с серверным временем
+            triggerRef.set(firebase.database.ServerValue.TIMESTAMP);
+            
+            // 2. Сбрасываем счетчик в 0
+            return 0; 
+        }
+
+        return newCount;
+    });
+}
+
+// Переменная, чтобы игнорировать старые события при первой загрузке страницы
+let initialLoad = true;
+
+// СЛУШАТЕЛЬ ТРИГГЕРОВ (Обеспечивает одновременный запуск)
+db.ref('triggers').on('value', (snapshot) => {
+    const data = snapshot.val() || {};
+    
+    // Если это первая загрузка данных при открытии сайта — не запускаем всё сразу
+    if (initialLoad) {
+        initialLoad = false;
+        return;
+    }
+
+    const configs = {
+        'firework': { name: 'салюта', launch: launchFirework, color: '#ff5722' },
+        'gifts': { name: 'подарков', launch: launchGiftRain, color: '#e91e63' },
+        'confetti': { name: 'конфетти', launch: launchConfetti, color: '#9c27b0' },
+        'lightning': { name: 'молний', launch: launchLightning, color: '#ffeb3b' },
+        'starfall': { name: 'звездопада', launch: launchStarfall, color: '#ffc107' },
+        'balloons': { name: 'шаров', launch: launchBalloons, color: '#03a9f4' }
+    };
+
+    // Определяем, какое именно событие обновилось (получило новый Timestamp)
+    // Firebase `.on('value')` сработает, когда любой триггер обновится
+    // В данном случае мы просто запускаем то, что пришло
+});
+
+// Дополнительно вешаем слушатели на каждое конкретное событие для надежности
+const eventTypes = ['firework', 'gifts', 'confetti', 'lightning', 'starfall', 'balloons'];
+eventTypes.forEach(type => {
+    db.ref('triggers/' + type).on('value', (snapshot) => {
+        if (initialLoad) return;
+        
+        const configs = {
+            'firework': { name: 'Салют', launch: launchFirework, color: '#ff5722' },
+            'gifts': { name: 'Подарки', launch: launchGiftRain, color: '#e91e63' },
+            'confetti': { name: 'Конфетти', launch: launchConfetti, color: '#9c27b0' },
+            'lightning': { name: 'Молнии', launch: launchLightning, color: '#ffeb3b' },
+            'starfall': { name: 'Звездопад', launch: launchStarfall, color: '#ffc107' },
+            'balloons': { name: 'Шары', launch: launchBalloons, color: '#03a9f4' }
+        };
+
+        const config = configs[type];
+        if (config) {
+            config.launch();
+            showActionNotice(`${config.name} активирован для всех!`, config.color);
+        }
+    });
+});
+
+// ОБНОВЛЕНИЕ БАРОВ (Прогресс накопления)
+// Эту часть оставляем только для визуального обновления полосок и цифр
+db.ref('multi_use').on('value', (snapshot) => {
+    const data = snapshot.val() || {};
+    const multiConfigs = {
+        'firework': 30, 'gifts': 25, 'confetti': 20,
+        'lightning': 35, 'starfall': 28, 'balloons': 22
+    };
+
+    Object.keys(multiConfigs).forEach(type => {
+        const max = multiConfigs[type];
+        const count = data[type] || 0;
+        
+        const countEl = document.getElementById(type + '-ready');
+        const bar = document.getElementById('bar-' + type + '-ready');
+        
+        if (countEl) countEl.textContent = `${count}/${max}`;
+        if (bar) bar.style.width = Math.min(100, (count / max) * 100) + '%';
+    });
+});
     const ref = db.ref('multi_use/' + type);
     
     ref.transaction((count) => {
@@ -2673,7 +2776,7 @@ function clickMultiUse(type) {
         
         return newCount;
     });
-}
+
 
 // Функции запуска многоразовых эффектов:
 
