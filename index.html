@@ -889,6 +889,136 @@ footer {
     cursor: not-allowed;
     pointer-events: none;
 }
+
+/* Северное сияние */
+.aurora-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    background: linear-gradient(180deg, 
+        rgba(0, 255, 136, 0.1) 0%,
+        rgba(0, 255, 255, 0.1) 25%,
+        rgba(255, 0, 255, 0.1) 50%,
+        transparent 75%
+    );
+    animation: auroraWave 15s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+@keyframes auroraWave {
+    0%, 100% { transform: translateY(0) skewX(0deg); }
+    50% { transform: translateY(-20px) skewX(5deg); }
+}
+
+/* Падающие звезды */
+.shooting-star {
+    position: fixed;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px 2px white, -150px 0 80px 20px white;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Светлячки */
+.firefly {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: #ffeb3b;
+    border-radius: 50%;
+    box-shadow: 0 0 15px 5px #ffeb3b;
+    pointer-events: none;
+    z-index: 15;
+    animation: fireflyFloat 8s ease-in-out infinite;
+}
+
+@keyframes fireflyFloat {
+    0%, 100% { transform: translate(0, 0); opacity: 1; }
+    25% { transform: translate(50px, -50px); opacity: 0.3; }
+    50% { transform: translate(-30px, -100px); opacity: 1; }
+    75% { transform: translate(-80px, -50px); opacity: 0.5; }
+}
+
+/* Парящие подарки */
+.floating-gift {
+    position: fixed;
+    font-size: 25px;
+    pointer-events: none;
+    z-index: 12;
+    animation: giftFloat 6s ease-in-out infinite;
+}
+
+@keyframes giftFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+}
+
+/* Музыкальные ноты */
+.music-note {
+    position: fixed;
+    font-size: 20px;
+    pointer-events: none;
+    z-index: 8;
+    animation: noteRise 5s ease-out;
+    opacity: 0;
+}
+
+@keyframes noteRise {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-200px) translateX(50px); opacity: 0; }
+}
+
+/* Конфетные трости */
+.candy-cane {
+    position: fixed;
+    font-size: 30px;
+    pointer-events: none;
+    z-index: 11;
+    animation: candySwing 3s ease-in-out infinite;
+    transform-origin: top center;
+}
+
+@keyframes candySwing {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+/* Морозные узоры */
+.frost-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(200,230,255,0.1) 0%, transparent 60%);
+    opacity: 0.7;
+}
+
+/* Олени */
+.reindeer {
+    position: fixed;
+    font-size: 40px;
+    pointer-events: none;
+    z-index: 20;
+    animation: reindeerFly 15s linear;
+}
+
+@keyframes reindeerFly {
+    0% { left: -100px; top: 10%; transform: rotate(-10deg); }
+    100% { left: 110%; top: 15%; transform: rotate(-10deg); }
+}
 </style>
 </head>
 
@@ -1058,6 +1188,93 @@ footer {
             </div>
             <button class="btn-ui" style="width: 100%; padding:12px" onclick="clickDecor('timer-snow')">ДОБАВИТЬ!</button>
         </div>
+        <div class="decor-slot" id="slot-aurora">
+    <div style="display:flex; justify-content:space-between; font-size:14px">
+        <span>🌌 Северное сияние</span>
+        <span id="aurora-count">0/250</span>
+    </div>
+    <div class="progress-bg">
+        <div id="bar-aurora" class="progress-fill" style="background: linear-gradient(90deg, #00ff88, #00ffff, #ff00ff);"></div>
+    </div>
+    <button class="btn-ui" style="width: 100%; padding:12px" onclick="clickDecor('aurora')">СОЗДАТЬ!</button>
+</div>
+
+<div class="decor-slot" id="slot-shooting-stars">
+    <div style="display:flex; justify-content:space-between; font-size:14px">
+        <span>💫 Падающие звезды</span>
+        <span id="shooting-stars-count">0/280</span>
+    </div>
+    <div class="progress-bg">
+        <div id="bar-shooting-stars" class="progress-fill" style="background: #ffd700;"></div>
+    </div>
+    <button class="btn-ui" style="width: 100%; padding:12px" onclick="clickDecor('shooting-stars')">ЗАПУСТИТЬ!</button>
+</div>
+
+<div class="decor-slot" id="slot-fireflies">
+    <div style="display:flex; justify-content:space-between; font-size:14px">
+        <span>✨ Светлячки</span>
+        <span id="fireflies-count">0/210</span>
+    </div>
+    <div class="progress-bg">
+        <div id="bar-fireflies" class="progress-fill" style="background: #ffeb3b;"></div>
+    </div>
+    <button class="btn-ui" style="width: 100%; padding:12px" onclick="clickDecor('fireflies')">ПОЙМАТЬ!</button>
+</div>
+
+<div class="decor-slot" id="slot-floating-gifts">
+    <div style="display:flex; justify-content:space-between; font-size:14px">
+        <span>🎁 Парящие подарки</span>
+        <span id="floating-gifts-count">0/240</span>
+    </div>
+    <div class="progress-bg">
+        <div id="bar-floating-gifts" class="progress-fill" style="background: #e91e63;"></div>
+    </div>
+    <button class="btn-ui" style="width: 100%; padding:12px" onclick="clickDecor('floating-gifts')">ЛЕВИТИРОВАТЬ!</button>
+</div>
+
+<div class="decor-slot" id="slot-music-notes">
+    <div style="display:flex; justify-content:space-between; font-size:14px">
+        <span>🎵 Музыкальные ноты</span>
+        <span id="music-notes-count">0/230</span>
+    </div>
+    <div class="progress-bg">
+        <div id="bar-music-notes" class="progress-fill" style="background: #9c27b0;"></div>
+    </div>
+    <button class="btn-ui" style="width: 100%; padding:12px" onclick="clickDecor('music-notes')">СЫГРАТЬ!</button>
+</div>
+
+<div class="decor-slot" id="slot-candy-canes">
+    <div style="display:flex; justify-content:space-between; font-size:14px">
+        <span>🍭 Конфетные трости</span>
+        <span id="candy-canes-count">0/260</span>
+    </div>
+    <div class="progress-bg">
+        <div id="bar-candy-canes" class="progress-fill" style="background: #ff5252;"></div>
+    </div>
+    <button class="btn-ui" style="width: 100%; padding:12px" onclick="clickDecor('candy-canes')">ПОВЕСИТЬ!</button>
+</div>
+
+<div class="decor-slot" id="slot-frost-overlay">
+    <div style="display:flex; justify-content:space-between; font-size:14px">
+        <span>❄️ Морозные узоры</span>
+        <span id="frost-overlay-count">0/300</span>
+    </div>
+    <div class="progress-bg">
+        <div id="bar-frost-overlay" class="progress-fill" style="background: #b3e5fc;"></div>
+    </div>
+    <button class="btn-ui" style="width: 100%; padding:12px" onclick="clickDecor('frost-overlay')">ЗАМОРОЗИТЬ!</button>
+</div>
+
+<div class="decor-slot" id="slot-reindeers">
+    <div style="display:flex; justify-content:space-between; font-size:14px">
+        <span>🦌 Олени</span>
+        <span id="reindeers-count">0/320</span>
+    </div>
+    <div class="progress-bg">
+        <div id="bar-reindeers" class="progress-fill" style="background: #795548;"></div>
+    </div>
+    <button class="btn-ui" style="width: 100%; padding:12px" onclick="clickDecor('reindeers')">ПРИЗВАТЬ!</button>
+</div>
     </div>
 
     <!-- Многоразовые эффекты -->
@@ -2459,7 +2676,16 @@ function clickDecor(type) {
             'border': { max: 160, name: 'рамке', activate: activateFestiveBorder },
             'ambient-confetti': { max: 220, name: 'конфетти', activate: activateAmbientConfetti },
             'side-lights': { max: 190, name: 'огонькам', activate: activateSideLights },
-            'timer-snow': { max: 170, name: 'снегу на таймере', activate: activateTimerSnow }
+            'timer-snow': { max: 170, name: 'снегу на таймере', activate: activateTimerSnow },
+             // НОВЫЕ УКРАШЕНИЯ:
+    'aurora': { max: 250, name: 'северному сиянию', activate: activateAurora },
+    'shooting-stars': { max: 280, name: 'падающим звездам', activate: activateShootingStars },
+    'fireflies': { max: 210, name: 'светлячкам', activate: activateFireflies },
+    'floating-gifts': { max: 240, name: 'парящим подаркам', activate: activateFloatingGifts },
+    'music-notes': { max: 230, name: 'музыкальным нотам', activate: activateMusicNotes },
+    'candy-canes': { max: 260, name: 'конфетным тростям', activate: activateCandyCanes },
+    'frost-overlay': { max: 300, name: 'морозным узорам', activate: activateFrostOverlay },
+    'reindeers': { max: 320, name: 'оленям', activate: activateReindeers }
         };
         
         const config = configs[type];
@@ -2537,6 +2763,122 @@ function activateCornerSnow() {
         snow.style.animationDelay = (i * 0.5) + 's';
         document.body.appendChild(snow);
     });
+}
+
+function activateAurora() {
+    if (document.querySelector('.aurora-overlay')) return;
+    
+    const aurora = document.createElement('div');
+    aurora.className = 'aurora-overlay';
+    document.body.appendChild(aurora);
+}
+
+function activateShootingStars() {
+    // Запускаем падающую звезду каждые 3-6 секунд
+    setInterval(() => {
+        const star = document.createElement('div');
+        star.className = 'shooting-star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 50 + '%';
+        document.body.appendChild(star);
+        
+        star.animate([
+            { transform: 'translate(0, 0)', opacity: 1 },
+            { transform: 'translate(300px, 300px)', opacity: 0 }
+        ], {
+            duration: 1500,
+            easing: 'ease-in'
+        }).onfinish = () => star.remove();
+    }, 3000 + Math.random() * 3000);
+}
+
+function activateFireflies() {
+    if (document.querySelectorAll('.firefly').length > 0) return;
+    
+    for (let i = 0; i < 15; i++) {
+        const firefly = document.createElement('div');
+        firefly.className = 'firefly';
+        firefly.style.left = Math.random() * 100 + '%';
+        firefly.style.top = Math.random() * 100 + '%';
+        firefly.style.animationDelay = Math.random() * 8 + 's';
+        firefly.style.animationDuration = (6 + Math.random() * 4) + 's';
+        document.body.appendChild(firefly);
+    }
+}
+
+function activateFloatingGifts() {
+    if (document.querySelectorAll('.floating-gift').length > 0) return;
+    
+    const gifts = ['🎁', '🎀', '🎊'];
+    for (let i = 0; i < 8; i++) {
+        const gift = document.createElement('div');
+        gift.className = 'floating-gift';
+        gift.textContent = gifts[Math.floor(Math.random() * gifts.length)];
+        gift.style.left = (10 + i * 12) + '%';
+        gift.style.top = (20 + Math.random() * 60) + '%';
+        gift.style.animationDelay = Math.random() * 3 + 's';
+        gift.style.animationDuration = (5 + Math.random() * 3) + 's';
+        document.body.appendChild(gift);
+    }
+}
+
+function activateMusicNotes() {
+    // Запускаем ноты каждые 2 секунды
+    setInterval(() => {
+        const notes = ['♪', '♫', '♬', '♩'];
+        const note = document.createElement('div');
+        note.className = 'music-note';
+        note.textContent = notes[Math.floor(Math.random() * notes.length)];
+        note.style.left = Math.random() * 100 + '%';
+        note.style.bottom = '0px';
+        note.style.color = ['#ff00ff', '#00ffff', '#ffff00'][Math.floor(Math.random() * 3)];
+        document.body.appendChild(note);
+        
+        setTimeout(() => note.remove(), 5000);
+    }, 2000);
+}
+
+function activateCandyCanes() {
+    if (document.querySelectorAll('.candy-cane').length > 0) return;
+    
+    // Вешаем конфетные трости по бокам и сверху
+    const positions = [
+        { top: '80px', left: '5%' },
+        { top: '80px', right: '5%' },
+        { top: '80px', left: '15%' },
+        { top: '80px', right: '15%' },
+        { top: '80px', left: '50%', transform: 'translateX(-50%)' }
+    ];
+    
+    positions.forEach((pos, i) => {
+        const candy = document.createElement('div');
+        candy.className = 'candy-cane';
+        candy.textContent = '🍭';
+        Object.assign(candy.style, pos);
+        candy.style.animationDelay = (i * 0.4) + 's';
+        document.body.appendChild(candy);
+    });
+}
+
+function activateFrostOverlay() {
+    if (document.querySelector('.frost-overlay')) return;
+    
+    const frost = document.createElement('div');
+    frost.className = 'frost-overlay';
+    document.body.appendChild(frost);
+}
+
+function activateReindeers() {
+    // Олень пролетает каждые 20-30 секунд
+    setInterval(() => {
+        const reindeer = document.createElement('div');
+        reindeer.className = 'reindeer';
+        reindeer.textContent = '🦌';
+        reindeer.style.top = (10 + Math.random() * 20) + '%';
+        document.body.appendChild(reindeer);
+        
+        setTimeout(() => reindeer.remove(), 15000);
+    }, 20000 + Math.random() * 10000);
 }
 
 function activateHeaderGarland() {
@@ -2630,18 +2972,19 @@ function activateTimerSnow() {
 }
 
 // ============================================
-// МНОГОРАЗОВЫЕ ЭФФЕКТЫ
+// МНОГОРАЗОВЫЕ ЭФФЕКТЫ С ПОЛНОЙ СИНХРОНИЗАЦИЕЙ
 // ============================================
 
-// ============================================
-// ОБНОВЛЕННЫЕ МНОГОРАЗОВЫЕ ЭФФЕКТЫ (СИНХРОННЫЕ)
-// ============================================
+// Переменная для отслеживания первой загрузки (чтобы не запускать старые эффекты)
+let effectsInitialized = false;
 
 function clickMultiUse(type) {
     const ref = db.ref('multi_use/' + type);
-    const triggerRef = db.ref('triggers/' + type); // Отдельная ветка для запуска событий
-
+    const triggerRef = db.ref('triggers/' + type);
+    
     ref.transaction((count) => {
+        const newCount = (count || 0) + 1;
+        
         const configs = {
             'firework': { max: 30, name: 'салюта', color: '#ff5722' },
             'gifts': { max: 25, name: 'подарков', color: '#e91e63' },
@@ -2650,133 +2993,71 @@ function clickMultiUse(type) {
             'starfall': { max: 28, name: 'звездопада', color: '#ffc107' },
             'balloons': { max: 22, name: 'шаров', color: '#03a9f4' }
         };
-
-        const config = configs[type];
-        const newCount = (count || 0) + 1;
-
-        if (newCount >= config.max) {
-            // Если достигли максимума:
-            // 1. Записываем в базу сигнал запуска с серверным временем
-            triggerRef.set(firebase.database.ServerValue.TIMESTAMP);
-            
-            // 2. Сбрасываем счетчик в 0
-            return 0; 
-        }
-
-        return newCount;
-    });
-}
-
-// Переменная, чтобы игнорировать старые события при первой загрузке страницы
-let initialLoad = true;
-
-// СЛУШАТЕЛЬ ТРИГГЕРОВ (Обеспечивает одновременный запуск)
-db.ref('triggers').on('value', (snapshot) => {
-    const data = snapshot.val() || {};
-    
-    // Если это первая загрузка данных при открытии сайта — не запускаем всё сразу
-    if (initialLoad) {
-        initialLoad = false;
-        return;
-    }
-
-    const configs = {
-        'firework': { name: 'салюта', launch: launchFirework, color: '#ff5722' },
-        'gifts': { name: 'подарков', launch: launchGiftRain, color: '#e91e63' },
-        'confetti': { name: 'конфетти', launch: launchConfetti, color: '#9c27b0' },
-        'lightning': { name: 'молний', launch: launchLightning, color: '#ffeb3b' },
-        'starfall': { name: 'звездопада', launch: launchStarfall, color: '#ffc107' },
-        'balloons': { name: 'шаров', launch: launchBalloons, color: '#03a9f4' }
-    };
-
-    // Определяем, какое именно событие обновилось (получило новый Timestamp)
-    // Firebase `.on('value')` сработает, когда любой триггер обновится
-    // В данном случае мы просто запускаем то, что пришло
-});
-
-// Дополнительно вешаем слушатели на каждое конкретное событие для надежности
-const eventTypes = ['firework', 'gifts', 'confetti', 'lightning', 'starfall', 'balloons'];
-eventTypes.forEach(type => {
-    db.ref('triggers/' + type).on('value', (snapshot) => {
-        if (initialLoad) return;
-        
-        const configs = {
-            'firework': { name: 'Салют', launch: launchFirework, color: '#ff5722' },
-            'gifts': { name: 'Подарки', launch: launchGiftRain, color: '#e91e63' },
-            'confetti': { name: 'Конфетти', launch: launchConfetti, color: '#9c27b0' },
-            'lightning': { name: 'Молнии', launch: launchLightning, color: '#ffeb3b' },
-            'starfall': { name: 'Звездопад', launch: launchStarfall, color: '#ffc107' },
-            'balloons': { name: 'Шары', launch: launchBalloons, color: '#03a9f4' }
-        };
-
-        const config = configs[type];
-        if (config) {
-            config.launch();
-            showActionNotice(`${config.name} активирован для всех!`, config.color);
-        }
-    });
-});
-
-// ОБНОВЛЕНИЕ БАРОВ (Прогресс накопления)
-// Эту часть оставляем только для визуального обновления полосок и цифр
-db.ref('multi_use').on('value', (snapshot) => {
-    const data = snapshot.val() || {};
-    const multiConfigs = {
-        'firework': 30, 'gifts': 25, 'confetti': 20,
-        'lightning': 35, 'starfall': 28, 'balloons': 22
-    };
-
-    Object.keys(multiConfigs).forEach(type => {
-        const max = multiConfigs[type];
-        const count = data[type] || 0;
-        
-        const countEl = document.getElementById(type + '-ready');
-        const bar = document.getElementById('bar-' + type + '-ready');
-        
-        if (countEl) countEl.textContent = `${count}/${max}`;
-        if (bar) bar.style.width = Math.min(100, (count / max) * 100) + '%';
-    });
-});
-    const ref = db.ref('multi_use/' + type);
-    
-    ref.transaction((count) => {
-        const newCount = (count || 0) + 1;
-        
-        const configs = {
-            'firework': { max: 30, name: 'салюта', launch: launchFirework, color: '#ff5722' },
-            'gifts': { max: 25, name: 'подарков', launch: launchGiftRain, color: '#e91e63' },
-            'confetti': { max: 20, name: 'конфетти', launch: launchConfetti, color: '#9c27b0' },
-            'lightning': { max: 35, name: 'молний', launch: launchLightning, color: '#ffeb3b' },
-            'starfall': { max: 28, name: 'звездопада', launch: launchStarfall, color: '#ffc107' },
-            'balloons': { max: 22, name: 'шаров', launch: launchBalloons, color: '#03a9f4' }
-        };
         
         const config = configs[type];
         if (!config) return newCount;
         
-        const countId = type + '-ready';
-        const barId = 'bar-' + type + '-ready';
+        // Обновляем UI локально
+        const countEl = document.getElementById(type + '-ready');
+        if (countEl) countEl.textContent = `${newCount}/${config.max}`;
         
-        document.getElementById(countId).textContent = `${newCount}/${config.max}`;
-        const bar = document.getElementById(barId);
+        const bar = document.getElementById('bar-' + type + '-ready');
         if (bar) bar.style.width = Math.min(100, (newCount / config.max) * 100) + '%';
         
         if (newCount >= config.max) {
-            config.launch();
-            showActionNotice(`${config.name} запущено!`, config.color);
+            // ДОСТИГЛИ МАКСИМУМА - отправляем триггер для ВСЕХ игроков
+            triggerRef.set(firebase.database.ServerValue.TIMESTAMP);
+            showActionNotice(`✨ ${config.name} запущено для всех!`, config.color);
+            
+            // Сбрасываем счетчик
             setTimeout(() => {
                 ref.set(0);
-                document.getElementById(countId).textContent = `0/${config.max}`;
-                if (bar) bar.style.width = '0%';
             }, 500);
+            
             return 0;
         } else {
+            // Еще не достигли - показываем прогресс
             showActionNotice(`+1 заряд ${config.name} (${newCount}/${config.max})`);
         }
         
         return newCount;
     });
+}
 
+// Слушатели триггеров для каждого эффекта (запускают для ВСЕХ)
+const eventTypes = ['firework', 'gifts', 'confetti', 'lightning', 'starfall', 'balloons'];
+
+eventTypes.forEach(type => {
+    db.ref('triggers/' + type).on('value', (snapshot) => {
+        // Пропускаем первое срабатывание при загрузке страницы
+        if (!effectsInitialized) return;
+        
+        const timestamp = snapshot.val();
+        if (!timestamp) return; // Если триггер пустой - ничего не делаем
+        
+        const configs = {
+            'firework': { name: '🎆 Салют', launch: launchFirework, color: '#ff5722' },
+            'gifts': { name: '🎁 Подарки', launch: launchGiftRain, color: '#e91e63' },
+            'confetti': { name: '🎉 Конфетти', launch: launchConfetti, color: '#9c27b0' },
+            'lightning': { name: '⚡ Молнии', launch: launchLightning, color: '#ffeb3b' },
+            'starfall': { name: '🌟 Звездопад', launch: launchStarfall, color: '#ffc107' },
+            'balloons': { name: '🎈 Шары', launch: launchBalloons, color: '#03a9f4' }
+        };
+        
+        const config = configs[type];
+        if (config) {
+            console.log(`Launching ${type} for everyone!`);
+            config.launch();
+            // НЕ показываем уведомление здесь, оно уже показано у того кто кликнул
+        }
+    });
+});
+
+// Активируем слушателей через короткую задержку после загрузки
+setTimeout(() => {
+    effectsInitialized = true;
+    console.log('Effects system initialized');
+}, 2000);
 
 // Функции запуска многоразовых эффектов:
 
@@ -2791,9 +3072,15 @@ function launchFirework() {
                 for (let i = 0; i < 40; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'firework-burst';
+                    particle.style.position = 'fixed';
                     particle.style.left = x + 'vw';
                     particle.style.top = y + 'vh';
+                    particle.style.width = '6px';
+                    particle.style.height = '6px';
+                    particle.style.borderRadius = '50%';
                     particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.pointerEvents = 'none';
+                    particle.style.zIndex = '9998';
                     document.body.appendChild(particle);
                     
                     const angle = (Math.PI * 2 * i) / 40;
@@ -2821,12 +3108,21 @@ function launchGiftRain() {
             const gift = document.createElement('div');
             gift.className = 'gift-rain';
             gift.textContent = gifts[Math.floor(Math.random() * gifts.length)];
+            gift.style.position = 'fixed';
             gift.style.left = Math.random() * 100 + 'vw';
-            gift.style.animationDelay = '0s';
-            gift.style.animationDuration = (2 + Math.random()) + 's';
+            gift.style.top = '-50px';
+            gift.style.fontSize = '30px';
+            gift.style.pointerEvents = 'none';
+            gift.style.zIndex = '9998';
             document.body.appendChild(gift);
             
-            setTimeout(() => gift.remove(), 3000);
+            gift.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: 'translateY(110vh) rotate(360deg)', opacity: 0.5 }
+            ], {
+                duration: 3000,
+                easing: 'linear'
+            }).onfinish = () => gift.remove();
         }, i * 100);
     }
 }
@@ -2837,11 +3133,15 @@ function launchConfetti() {
         setTimeout(() => {
             const confetti = document.createElement('div');
             confetti.className = 'firework-burst';
+            confetti.style.position = 'fixed';
             confetti.style.left = Math.random() * 100 + 'vw';
             confetti.style.top = '-20px';
             confetti.style.width = (5 + Math.random() * 10) + 'px';
             confetti.style.height = (5 + Math.random() * 10) + 'px';
+            confetti.style.borderRadius = '50%';
             confetti.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+            confetti.style.pointerEvents = 'none';
+            confetti.style.zIndex = '9998';
             document.body.appendChild(confetti);
             
             confetti.animate([
@@ -2942,13 +3242,23 @@ db.ref('decorations').once('value', (snapshot) => {
         'border': { max: 160, activate: activateFestiveBorder },
         'ambient-confetti': { max: 220, activate: activateAmbientConfetti },
         'side-lights': { max: 190, activate: activateSideLights },
-        'timer-snow': { max: 170, activate: activateTimerSnow }
+        'timer-snow': { max: 170, activate: activateTimerSnow },
+        // НОВЫЕ:
+    'aurora': { max: 250, activate: activateAurora, check: () => !document.querySelector('.aurora-overlay') },
+    'shooting-stars': { max: 280, activate: activateShootingStars, check: () => true },
+    'fireflies': { max: 210, activate: activateFireflies, check: () => document.querySelectorAll('.firefly').length === 0 },
+    'floating-gifts': { max: 240, activate: activateFloatingGifts, check: () => document.querySelectorAll('.floating-gift').length === 0 },
+    'music-notes': { max: 230, activate: activateMusicNotes, check: () => true },
+    'candy-canes': { max: 260, activate: activateCandyCanes, check: () => document.querySelectorAll('.candy-cane').length === 0 },
+    'frost-overlay': { max: 300, activate: activateFrostOverlay, check: () => !document.querySelector('.frost-overlay') },
+    'reindeers': { max: 320, activate: activateReindeers, check: () => true }
     };
     
     Object.keys(passiveConfigs).forEach(type => {
         const config = passiveConfigs[type];
         const count = data[type] || 0;
         
+        // АВТОАКТИВАЦИЯ при загрузке
         if (count >= config.max) {
             config.activate();
             const slot = document.getElementById('slot-' + type);
@@ -2988,80 +3298,80 @@ db.ref('multi_use').once('value', (snapshot) => {
     });
 });
 
-// Слушаем обновления пассивных улучшений в реальном времени
+// Реалтайм синхронизация пассивных улучшений
 db.ref('decorations').on('value', (snapshot) => {
     const data = snapshot.val() || {};
     
-    if (data.tree >= 100 && !document.querySelector('.header-tree')) {
-        activateTreeDecoration();
-    }
-    if (data.garland >= 150) {
-        activateGarlandDecoration();
-    }
-    if (data.snow >= 200 && document.querySelectorAll('.permanent-snow').length === 0) {
-        activateSnowDecoration();
-    }
-    if (data.corners >= 120 && !document.querySelector('.corner-snow')) {
-        activateCornerSnow();
-    }
-    if (data['header-garland'] >= 180 && !document.querySelector('.header-garland')) {
-        activateHeaderGarland();
-    }
-    if (data.stars >= 140 && !document.querySelector('.side-star')) {
-        activateSideStars();
-    }
-    if (data.border >= 160 && !document.querySelector('.festive-border')) {
-        activateFestiveBorder();
-    }
-    if (data['ambient-confetti'] >= 220 && document.querySelectorAll('.ambient-confetti').length === 0) {
-        activateAmbientConfetti();
-    }
-    if (data['side-lights'] >= 190 && !document.querySelector('.side-light')) {
-        activateSideLights();
-    }
-    if (data['timer-snow'] >= 170) {
-        activateTimerSnow();
-    }
+    const passiveConfigs = {
+        'tree': { max: 100, activate: activateTreeDecoration, check: () => !document.querySelector('.header-tree') },
+        'garland': { max: 150, activate: activateGarlandDecoration, check: () => true },
+        'snow': { max: 200, activate: activateSnowDecoration, check: () => document.querySelectorAll('.permanent-snow').length === 0 },
+        'corners': { max: 120, activate: activateCornerSnow, check: () => !document.querySelector('.corner-snow') },
+        'header-garland': { max: 180, activate: activateHeaderGarland, check: () => !document.querySelector('.header-garland') },
+        'stars': { max: 140, activate: activateSideStars, check: () => !document.querySelector('.side-star') },
+        'border': { max: 160, activate: activateFestiveBorder, check: () => !document.querySelector('.festive-border') },
+        'ambient-confetti': { max: 220, activate: activateAmbientConfetti, check: () => document.querySelectorAll('.ambient-confetti').length === 0 },
+        'side-lights': { max: 190, activate: activateSideLights, check: () => !document.querySelector('.side-light') },
+        'timer-snow': { max: 170, activate: activateTimerSnow, check: () => true }
+    };
+    
+    Object.keys(passiveConfigs).forEach(type => {
+        const config = passiveConfigs[type];
+        const count = data[type] || 0;
+        
+        // Активируем если достигнут лимит и еще не активировано
+        if (count >= config.max && config.check()) {
+            config.activate();
+            const slot = document.getElementById('slot-' + type);
+            if (slot) slot.classList.add('completed');
+        }
+        
+        // Обновляем UI
+        const countEl = document.getElementById(type + '-count');
+        if (countEl) countEl.textContent = `${count}/${config.max}`;
+        
+        const bar = document.getElementById('bar-' + type);
+        if (bar) bar.style.width = Math.min(100, (count / config.max) * 100) + '%';
+    });
 });
 
-// Слушаем обновления многоразовых эффектов в реальном времени
+// Реалтайм синхронизация прогресса многоразовых эффектов (только UI, не запуск)
 db.ref('multi_use').on('value', (snapshot) => {
     const data = snapshot.val() || {};
     
     const multiConfigs = {
-        'firework': { max: 30, launch: launchFirework },
-        'gifts': { max: 25, launch: launchGiftRain },
-        'confetti': { max: 20, launch: launchConfetti },
-        'lightning': { max: 35, launch: launchLightning },
-        'starfall': { max: 28, launch: launchStarfall },
-        'balloons': { max: 22, launch: launchBalloons }
+        'firework': 30,
+        'gifts': 25,
+        'confetti': 20,
+        'lightning': 35,
+        'starfall': 28,
+        'balloons': 22
     };
     
     Object.keys(multiConfigs).forEach(type => {
-        const config = multiConfigs[type];
+        const max = multiConfigs[type];
         const count = data[type] || 0;
         
         const countEl = document.getElementById(type + '-ready');
-        if (countEl) countEl.textContent = `${count}/${config.max}`;
+        if (countEl) countEl.textContent = `${count}/${max}`;
         
         const bar = document.getElementById('bar-' + type + '-ready');
-        if (bar) bar.style.width = Math.min(100, (count / config.max) * 100) + '%';
-        
-        if (count >= config.max) {
-            config.launch();
-        }
+        if (bar) bar.style.width = Math.min(100, (count / max) * 100) + '%';
     });
 });
 
+// Функция сброса прогресса (для админа)
 function resetAllProgress() {
     if (!confirm('ТОЧНО СБРОСИТЬ ВЕСЬ ПРОГРЕСС?')) return;
     
     db.ref('decorations').set({});
     db.ref('multi_use').set({});
+    db.ref('triggers').set({});
     db.ref('global_progress').set(0);
     db.ref('live_clicks').remove();
     
     alert('Прогресс полностью сброшен');
+    location.reload();
 }
 </script>
 <div id="music-notice" class="music-notice">
