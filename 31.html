@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С Новым Годом! 🎉</title>
+    <style>
+        /* --- ОСНОВНЫЕ СТИЛИ (ИЗ ПРЕДЫДУЩЕЙ ВЕРСИИ) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #111122 50%, #1a1a3a 100%);
+            overflow: hidden; height: 100vh; touch-action: none; position: relative;
+        }
+        .background-stars { position: fixed; inset: 0; z-index: 1; }
+        .star { position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%; animation: twinkle 3s ease-in-out infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .floating-particle { position: fixed; font-size: 20px; opacity: 0.6; pointer-events: none; z-index: 2; animation: floatUp 15s linear infinite; }
+        @keyframes floatUp { 0% { transform: translateY(110vh) translateX(0) rotate(0deg); opacity: 0; } 100% { transform: translateY(-10vh) translateX(50px) rotate(360deg); opacity: 0; } }
+
+        /* --- КАССЕТА --- */
+        #cassette-container {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 100; cursor: grab; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+        }
+        #cassette-container.dragging { cursor: grabbing; transform: translate(-50%, -50%) scale(1.05); }
+        #cassette-container.inserted { opacity: 0; pointer-events: none; }
+        .cassette {
+            width: 250px; height: 150px; background: linear-gradient(145deg, #333, #1a1a1a);
+            border-radius: 10px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.1); border: 3px solid #444;
+        }
+        .cassette-window { position: absolute; top: 35px; left: 35px; right: 35px; height: 45px; background: rgba(100, 100, 100, 0.3); border-radius: 25px; overflow: hidden; border: 2px solid #222; }
+        .cassette-reels { display: flex; justify-content: space-between; padding: 0 15px; align-items: center; height: 100%; }
+        .reel { width: 36px; height: 36px; border-radius: 50%; background: radial-gradient(circle, #fff 10%, #ccc 30%, #111 100%); border: 2px solid #555; position: relative; animation: reelSpin 3s linear infinite; }
+        .reel::after { content: '⚙️'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: #333; }
+        @keyframes reelSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .cassette-label { position: absolute; bottom: 15px; left: 20px; right: 20px; background: #f0f0f0; padding: 5px; text-align: center; color: #222; font-size: 14px; font-weight: bold; font-family: 'Courier New', monospace; text-transform: uppercase; border-radius: 4px; }
+        .cassette-screws { position: absolute; width: 8px; height: 8px; background: linear-gradient(45deg, #777, #444); border-radius: 50%; }
+        .cassette-screws:nth-child(1) { top: 10px; left: 10px; } .cassette-screws:nth-child(2) { top: 10px; right: 10px; } .cassette-screws:nth-child(3) { bottom: 10px; left: 10px; } .cassette-screws:nth-child(4) { bottom: 10px; right: 10px; }
+
+        /* --- СТРЕЛКА И ИНСТРУКЦИЯ --- */
+        .arrow-down { position: fixed; bottom: 25%; left: 50%; transform: translateX(-50%); font-size: 60px; animation: bounce 2s ease-in-out infinite; z-index: 99; transition: opacity 0.5s; }
+        .arrow-down.hidden, .instruction.hidden { opacity: 0; pointer-events: none; }
+        @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(25px); } }
+        .instruction { position: fixed; top: 15%; left: 50%; transform: translateX(-50%); color: white; font-size: 24px; text-align: center; text-shadow: 0 3px 10px rgba(0,0,0,0.8); z-index: 90; transition: opacity 0.5s; font-weight: bold; animation: instructionPulse 2s ease-in-out infinite; }
+        @keyframes instructionPulse { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; } 50% { transform: translateX(-50%) scale(1.1); opacity: 1; } }
+
+        /* --- МАГНИТОФОН (РЕТРО ДИЗАЙН С ДОБАВЛЕНИЕМ СУБТИТРОВ) --- */
+        #boombox { position: fixed; bottom: -100%; left: 50%; transform: translateX(-50%); width: 450px; transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 50; }
+        #boombox.show { bottom: 5%; }
+        #boombox.positioned { bottom: auto; left: auto; transform: none; }
+        @media (min-width: 768px) { #boombox.positioned { right: 5%; top: 50%; transform: translateY(-50%); width: 35%; max-width: 550px; } }
+        @media (max-width: 767px) {
+            #boombox.positioned {  padding-top: 100px; bottom: 2%; left: 50%; transform: translateX(-50%); width: 85%; height: auto; max-height: 50vh; /* Увеличили высоту для мобилок */ }
+            .boombox-device { height: auto !important; padding-bottom: 20px; }
+            .boombox-center-panel { width: 100%; order: -1; margin-bottom: 15px; }
+            .boombox-speaker { width: 80px; height: 80px; margin: 5px; }
+        }
+        .boombox-wrapper { position: relative; }
+        .boombox-device {
+            width: 100%; height: auto; min-height: 420px; /* Увеличили высоту */
+            background: linear-gradient(to bottom, #5a5a5a, #2a2a2a); border-radius: 15px; border-top: 20px solid #777; border-bottom: 10px solid #1a1a1a;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.2); position: relative; padding: 30px 20px; display: flex; flex-wrap: wrap; justify-content: space-between;
+        }
+        .boombox-device::before { content: ''; position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 60%; height: 40px; background: linear-gradient(to bottom, #444, #222); border-radius: 20px 20px 0 0; border: 5px solid #1a1a1a; border-bottom: none; z-index: -1; }
+        .boombox-speaker {
+            width: 120px; height: 120px; background: radial-gradient(circle, #222 30%, #111 70%); border-radius: 50%; position: relative; border: 8px solid #333;
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0,0,0,0.8) 2px, rgba(0,0,0,0.8) 4px), repeating-linear-gradient(-45deg, transparent, transparent 2px, rgba(0,0,0,0.8) 2px, rgba(0,0,0,0.8) 4px);
+        }
+        .boombox-center-panel { width: calc(100% - 260px); display: flex; flex-direction: column; align-items: center; }
+
+        /* Верхний VFD экран */
+        .boombox-display {
+            width: 100%; height: 60px; background: #0f2a0f; margin-bottom: 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,255,0,0.3); border: 3px solid #111; position: relative; overflow: hidden;
+        }
+        .boombox-title { color: #50ff50; font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold; text-transform: uppercase; text-shadow: 0 0 8px #50ff50; white-space: nowrap; }
+
+        /* --- НОВЫЙ ЭКРАН ДЛЯ СУБТИТРОВ --- */
+        .boombox-subtitle-screen {
+            width: 100%;
+            min-height: 80px; /* Достаточная высота для текста */
+            background: #1a1a1a; /* Более темный, "матовый" экран */
+            border: 3px solid #333;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        #subtitle-text {
+            color: #ffffff; /* Менее яркий цвет для субтитров */
+            font-family: 'Arial', sans-serif;
+            font-size: 15px;
+            text-align: center;
+            line-height: 1.4;
+            word-wrap: break-word; /* Перенос длинных слов */
+            overflow-wrap: break-word;
+            opacity: 0; /* Скрыто по умолчанию для плавного появления */
+            transition: opacity 0.5s ease-in-out;
+            max-width: 100%;
+        }
+
+        #subtitle-text.active {
+            opacity: 1;
+        }
+        /* --------------------------------------- */
+
+        .boombox-cassette-slot { width: 90%; height: 50px; background: #000; border-radius: 4px; border: 3px solid #333; margin-bottom: 15px; position: relative; overflow: hidden; }
+        .boombox-buttons { display: flex; justify-content: center; gap: 10px; width: 100%; }
+        .boombox-button { width: 50px; height: 30px; background: linear-gradient(to bottom, #ccc, #888); border-radius: 4px; border: 2px solid #555; }
+        .boombox-button:nth-child(3) { background: linear-gradient(to bottom, #ff4444, #cc0000); }
+        .boombox-garland { position: absolute; top: -25px; left: 5%; width: 90%; height: 15px; display: flex; justify-content: space-around; z-index: 10; }
+        .garland-light { width: 12px; height: 12px; border-radius: 50%; animation: garlandBlink 1.5s infinite alternate; }
+        .garland-light:nth-child(1) { background: #ff0000; } .garland-light:nth-child(2) { background: #00ff00; animation-delay: 0.3s; } .garland-light:nth-child(3) { background: #0000ff; animation-delay: 0.6s; } .garland-light:nth-child(4) { background: #ffff00; animation-delay: 0.9s; } .garland-light:nth-child(5) { background: #ff00ff; animation-delay: 1.2s; }
+        @keyframes garlandBlink { 0% { opacity: 0.4; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 20px currentColor; } }
+
+        /* --- СЛАЙДЕР --- */
+        #gallery-container { position: fixed; left: -100%; top: 50%; transform: translateY(-50%); width: 55%; max-width: 650px; opacity: 0; transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 40; }
+        #gallery-container.show { left: 5%; opacity: 1; }
+        @media (max-width: 767px) { #gallery-container { width: 90%; max-width: none; top: 5%; transform: none; } #gallery-container.show { left: 5%; top: 5%; } }
+        .gallery-title { text-align: center; color: white; font-size: 32px; font-weight: bold; margin-bottom: 20px; animation: titleGlow 3s ease-in-out infinite; }
+        @keyframes titleGlow { 0%, 100% { text-shadow: 0 0 10px rgba(255,255,255,0.5); color: #fff;} 50% { text-shadow: 0 0 20px rgba(255,215,0,0.8); color: #ffd700; } }
+        .slider { position: relative; width: 100%; aspect-ratio: 16/10; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); }
+        .slide { position: absolute; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 30px; pointer-events: none; }
+        .slide.active { opacity: 1; pointer-events: auto; }
+        .slide-image { width: auto; max-width: 100%; height: 75%; object-fit: contain; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .slide-text { color: white; font-size: 20px; text-align: center; text-shadow: 0 2px 5px rgba(0,0,0,0.8); font-weight: 500; }
+        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 24px; cursor: pointer; z-index: 5; transition: all 0.3s; backdrop-filter: blur(5px); }
+        .slider-arrow:hover { background: rgba(255,255,255,0.3); }
+        .arrow-left { left: 15px; } .arrow-right { right: 15px; }
+        .slider-nav-dots { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 5; }
+        .slider-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; transition: all 0.4s; }
+        .slider-dot.active { background: white; transform: scale(1.3); }
+        .confetti { position: fixed; width: 10px; height: 10px; pointer-events: none; z-index: 1000; }
+        .snowflake { position: fixed; color: rgba(255,255,255,0.8); font-size: 20px; pointer-events: none; z-index: 3; animation: snowFall 10s linear infinite; }
+        @keyframes snowFall { 0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; } 100% { transform: translateY(110vh) translateX(100px) rotate(360deg); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <audio id="bg-music" src="congrats.mp3" preload="auto"></audio>
+
+    <div class="background-stars" id="stars"></div>
+    <div class="instruction" id="instruction"></div>
+
+    <div id="cassette-container">
+        <div class="cassette">
+            <div class="cassette-screws"></div><div class="cassette-screws"></div><div class="cassette-screws"></div><div class="cassette-screws"></div>
+            <div class="cassette-window"><div class="cassette-reels"><div class="reel"></div><div class="reel"></div></div></div>
+            <div class="cassette-label">Happy New Year 2025 Mix</div>
+        </div>
+    </div>
+
+    <div class="arrow-down" id="arrow">👇</div>
+
+    <div id="boombox">
+        <div class="boombox-wrapper">
+            <div class="boombox-garland"><div class="garland-light"></div><div class="garland-light"></div><div class="garland-light"></div><div class="garland-light"></div><div class="garland-light"></div></div>
+            <div class="boombox-device">
+                <div class="boombox-speaker"></div>
+                
+                <div class="boombox-center-panel">
+                    <div class="boombox-display">
+                        <div class="boombox-title">С НАСТУПАЮЩИМ
+                            <br>
+                            НОВЫМ ГОДОМ!</div>
+                    </div>
+                    
+                    <div class="boombox-subtitle-screen">
+                        <div id="subtitle-text">Ожидание кассеты.</div>
+                    </div>
+
+                    <div class="boombox-cassette-slot"><p style="font-size: 4px;">11010000 10101111 00100000 11010000 10111011 11010001 10001110 11010000 10110001 11010000 10111011 11010001 10001110 00100000 11010001 10000010 11010000 10110101 11010000 10110001 11010001 10001111 00101100 00100000 11010001 10000001 11010000 10111111 11010000 10110000 11010001 10000001 11010000 10111000 11010000 10110001 11010000 10111110 00100000 11010000 10110111 11010000 10110000 00100000 11010001 10001101 11010001 10000010 11010000 10111110 11010001 10000010 00100000 11010000 10110011 11010000 10111110 11010000 10110100 UTF-8</p></div>
+                    <div class="boombox-buttons">
+                        <div class="boombox-button"></div><div class="boombox-button"></div><div class="boombox-button"></div><div class="boombox-button"></div>
+                    </div>
+                </div>
+
+                <div class="boombox-speaker"></div>
+            </div>
+        </div>
+    </div>
+<div id="gallery-container">
+    <div class="gallery-title" id="dynamic-title">С Новым Годом! 🥂</div>
+    <div class="slider">
+        <div class="slider-arrow arrow-left" id="prev-slide">❮</div>
+        <div class="slider-arrow arrow-right" id="next-slide">❯</div>
+        
+        <div id="slides-wrapper"></div>
+
+        <div class="slider-nav-dots" id="dots-wrapper"></div>
+    </div>
+</div>
+
+    <script>
+        // --- Эффекты фона ---
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) { const star = document.createElement('div'); star.className = 'star'; star.style.left = Math.random()*100+'%'; star.style.top = Math.random()*100+'%'; starsContainer.appendChild(star); }
+        for (let i=0; i<15; i++) { setTimeout(()=>{ const p=document.createElement('div'); p.className='floating-particle'; p.textContent=['❄️','✨','🎄'].sort(()=>Math.random()-0.5)[0]; p.style.left=Math.random()*100+'%'; document.body.appendChild(p); }, i*500); }
+        setInterval(() => { const s=document.createElement('div'); s.className='snowflake'; s.textContent='❄'; s.style.left=Math.random()*100+'%'; document.body.appendChild(s); setTimeout(()=>s.remove(), 10000); }, 500);
+
+        // --- Аудио и Субтитры ---
+        const audio = document.getElementById('bg-music');
+        const subtitleEl = document.getElementById('subtitle-text');
+
+        // НАСТРОЙТЕ СУБТИТРЫ ЗДЕСЬ (время в секундах : текст)
+        const subtitles = [
+            { time: 1, text: "Друзья..." },
+            { time: 4, text: "Вот и 31 декабря..." },
+            { time: 8, text: "Новый год уже здесь - рядом, совсем близко." },
+            { time: 12, text: "И всё, что я хочу вам сказать в этом сообщении..." },
+            { time: 16, text: "Спасибо... Просто спасибо..." },
+            { time: 20, text: "Я правда рад, что встретил вас в этом году." },
+            { time: 24, text: "Тогда, ещё 29 июня, когда энджой что-то отмечал," },
+            { time: 28, text: "я познакомился с такими же косплеерами…" },
+            { time: 32, text: "и всё как-то само закрутилось." },
+            { time: 36, text: "Я рад, что повстречал вас:" },
+            { time: 38, text: "Хёка" },
+            { time: 39, text: "Аяна" },
+            { time: 41, text: "Сева" },
+            { time: 42, text: "Лиф" },
+            { time: 43, text: "Веня" },
+            { time: 44, text: "Давид" },
+            { time: 45, text: "Дима" },
+            { time: 46, text: "Ильяс" },
+            { time: 47, text: "Алан" },
+            { time: 48, text: "Юки" },
+            { time: 49, text: "Марк" },
+            { time: 50, text: "Кифи" },
+            { time: 51, text: "Женя" },
+            { time: 52, text: "Лиса и Лимон" },
+            { time: 53, text: "всех перечислять можно бесконечно." },
+            { time: 56, text: "Но главное" },
+            { time: 60, text: "Спасибо вам за этот невероятный год." },
+            { time: 64, text: "За мотивацию, за поддержку, за счастье, которое вы мне подарили." },
+            { time: 68, text: "Я вам правда очень благодарен." },
+            { time: 72, text: "И нереально вас люблю." },
+            { time: 76, text: "..." },
+            { time: 80, text: "Спасибо за этот год." },
+            { time: 84, text: "И с наступающим 2026 годом!" },
+            { time: 90, text: "ㅤ" },
+
+        ];
+
+        audio.ontimeupdate = () => {
+            const currentTime = audio.currentTime;
+            const currentSubtitle = subtitles.filter(s => s.time <= currentTime).pop();
+
+            if (currentSubtitle && subtitleEl.innerText !== currentSubtitle.text) {
+                subtitleEl.classList.remove('active'); // Плавное исчезновение
+                setTimeout(() => {
+                    subtitleEl.innerText = currentSubtitle.text;
+                    subtitleEl.classList.add('active'); // Плавное появление
+                }, 500);
+            }
+        };
+
+        // --- Драг-н-Дроп ---
+        const cassette = document.getElementById('cassette-container');
+        const boombox = document.getElementById('boombox');
+        let isDragging=false, startY=0;
+        cassette.addEventListener('mousedown', startDrag); cassette.addEventListener('touchstart', startDrag, {passive:false});
+        function startDrag(e) { isDragging=true; cassette.classList.add('dragging'); startY=e.type==='mousedown'?e.clientY:e.touches[0].clientY; }
+        document.addEventListener('mousemove', drag); document.addEventListener('touchmove', drag, {passive:false});
+        function drag(e) { if(!isDragging)return; e.preventDefault(); const clientY=e.type==='mousemove'?e.clientY:e.touches[0].clientY; const currentY=clientY-startY; if(currentY>0) cassette.style.transform=`translate(-50%, calc(-50% + ${currentY}px)) scale(1.05)`; }
+        document.addEventListener('mouseup', endDrag); document.addEventListener('touchend', endDrag);
+        function endDrag(e) { if(!isDragging)return; isDragging=false; cassette.classList.remove('dragging'); const clientY=e.type==='mouseup'?e.clientY:e.changedTouches[0].clientY; if(clientY-startY > window.innerHeight*0.3) insertCassette(); else cassette.style.transform='translate(-50%, -50%)'; }
+
+        function insertCassette() {
+            document.getElementById('instruction').classList.add('hidden');
+            document.getElementById('arrow').classList.add('hidden');
+            cassette.style.transition = 'all 0.8s ease-in';
+            cassette.style.transform = `translate(-50%, ${window.innerHeight}px) scale(0.8)`;
+            cassette.style.opacity = '0';
+
+            setTimeout(() => {
+                boombox.classList.add('show');
+                launchConfetti();
+                audio.play(); // ЗАПУСК АУДИО
+            }, 600);
+
+            setTimeout(() => {
+                boombox.classList.add('positioned');
+                document.getElementById('gallery-container').classList.add('show');
+                startSlider();
+            }, 2500);
+        }
+
+        // --- Конфетти ---
+        function launchConfetti() { /* (Код конфетти из предыдущей версии, сокращен для краткости) */
+            for(let i=0;i<100;i++){setTimeout(()=>{const c=document.createElement('div');c.className='confetti';c.style.left=Math.random()*100+'%';c.style.background=['#f00','#0f0','#00f','#ff0'][Math.floor(Math.random()*4)];document.body.appendChild(c);c.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${Math.random()*200-100}px, ${window.innerHeight}px) rotate(${Math.random()*720}deg)`,opacity:0}],{duration:3000}).onfinish=()=>c.remove();},i*20);}
+        }
+
+        // --- НАСТРОЙКИ ГАЛЕРЕИ ---
+const TOTAL_PHOTOS = 20; // Укажите количество фото
+const photoSubtitles = [
+    "Вот и новый год здесь.",
+    "Спасибо мои дорогие друзья, за этот невероятный год.",
+    "А ведь я обещал доделать этот мем...",
+    "Как вчера помню это открытие энджоя,с каким же размахом оно прошло!",
+    "И будь то в маленькой компании",
+    "С едой.",
+    "С великолепным творчеством.",
+    "Или без,вы всегда будете самыми лучшими!",
+    "Всегда будете меня вдохновлять.",
+    "И радовать одним лишь своим присуствием!",
+    "Вы, ребята, невероятны!",
+    "Я не знаю, как бы я жил, не повстречай я вас.",
+    "Наверняка просто бы так и жил в компе или умер со скуки.",
+    "И даже эта страница, этого сайта.",
+    "Она сделана благодаря вам ребят, благодаря вашей поддержке и вдохновению.",
+    "Благодаря победе Алана и Ильяса в Апорте.",
+    "Благодаря нашим гулянкам и тусовкам.",
+    "Благодаря нашему общению и дружбе.",
+    "И конечно же благодаря творчеству наших невероятных творцов!",
+    "С новым 2026 годом вас, мои дорогие друзья!",
+];
+
+// Генерируем слайды и точки автоматически
+const slidesWrapper = document.getElementById('slides-wrapper');
+const dotsWrapper = document.getElementById('dots-wrapper');
+
+for (let i = 1; i <= TOTAL_PHOTOS; i++) {
+    // Создаем слайд
+    const slide = document.createElement('div');
+    slide.className = `slide ${i === 1 ? 'active' : ''}`;
+    slide.innerHTML = `
+        <img src="images/img-${i}.jpg" class="slide-image" alt="Фото ${i}" onerror="this.src='https://via.placeholder.com/800x600?text=Фото+${i}'">
+        <div class="slide-text">${photoSubtitles[i-1] || "Счастливые моменты года ✨"}</div>
+    `;
+    slidesWrapper.appendChild(slide);
+
+    // Создаем точку
+    const dot = document.createElement('div');
+    dot.className = `slider-dot ${i === 1 ? 'active' : ''}`;
+    dot.dataset.slide = i - 1;
+    dotsWrapper.appendChild(dot);
+}
+
+// --- ОБНОВЛЕННАЯ ЛОГИКА УПРАВЛЕНИЯ ---
+let currentSlide = 0;
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.slider-dot');
+let sliderInterval;
+
+function updateSlider() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+    dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+}
+
+function nextSlide() {
+    currentSlide = (currentSlide + 1) % TOTAL_PHOTOS;
+    updateSlider();
+}
+
+function prevSlide() {
+    currentSlide = (currentSlide - 1 + TOTAL_PHOTOS) % TOTAL_PHOTOS;
+    updateSlider();
+}
+
+function startSlider() {
+    clearInterval(sliderInterval);
+    sliderInterval = setInterval(nextSlide, 8000); // Смена каждые 8 секунд
+}
+
+// Навешиваем события на стрелки
+document.getElementById('next-slide').onclick = () => { nextSlide(); startSlider(); };
+document.getElementById('prev-slide').onclick = () => { prevSlide(); startSlider(); };
+
+// Навешиваем события на точки
+dots.forEach(dot => {
+    dot.onclick = () => {
+        currentSlide = parseInt(dot.dataset.slide);
+        updateSlider();
+        startSlider();
+    };
+});
+    </script>
+</body>
+</html>
