@@ -3677,6 +3677,279 @@ function startFlashEffect() {
         flashCount++;
     }, 2000); // Каждые 2 секунды
 }
+
+// Добавьте этот код в основной index.html
+// Вставьте его после загрузки календаря или в конец скрипта
+
+// Функция для создания особого эффекта для 31 дня (ТОЛЬКО КОГДА ДОСТУПЕН)
+function makeDay31Special() {
+    // Находим кнопку 31 дня
+    const day31Button = document.querySelector('[data-day="31"]');
+    
+    if (!day31Button) {
+        console.log('Кнопка 31 дня не найдена');
+        return;
+    }
+    
+    // ПРОВЕРКА: Кнопка должна быть доступна (не заблокирована)
+    // Проверяем все возможные способы блокировки
+    const isDisabled = day31Button.hasAttribute('disabled') || 
+                       day31Button.classList.contains('disabled') ||
+                       day31Button.classList.contains('locked') ||
+                       day31Button.style.pointerEvents === 'none' ||
+                       day31Button.style.opacity === '0.5' ||
+                       day31Button.style.opacity === '0.3' ||
+                       day31Button.getAttribute('data-available') === 'false' ||
+                       day31Button.getAttribute('data-locked') === 'true';
+    
+    // Дополнительная проверка: проверяем текущую дату
+    const now = new Date();
+    const currentDay = now.getDate();
+    const currentMonth = now.getMonth(); // 0-11
+    
+    // 31 день должен быть доступен только 31 декабря или позже
+    const isDecember31OrLater = (currentMonth === 11 && currentDay >= 31) || currentMonth > 11;
+    
+    if (isDisabled || !isDecember31OrLater) {
+        console.log('⏰ 31 день ещё не доступен, эффекты не включаются');
+        console.log('Текущая дата:', currentDay, 'декабря');
+        return;
+    }
+    
+    console.log('🎉 31 день доступен! Делаем его особенным!');
+    
+    // Добавляем специальный ID для удобства
+    day31Button.id = 'special-day-31';
+    
+    // Добавляем стили для магического свечения
+    if (!document.getElementById('day31-special-styles')) {
+        const style = document.createElement('style');
+        style.id = 'day31-special-styles';
+        style.textContent = `
+            /* Основное магическое свечение */
+            #special-day-31 {
+                position: relative;
+                animation: pulseGlow 2s ease-in-out infinite, rotate3d 4s ease-in-out infinite !important;
+                box-shadow: 
+                    0 0 20px rgba(255, 215, 0, 0.8),
+                    0 0 40px rgba(255, 215, 0, 0.6),
+                    0 0 60px rgba(255, 215, 0, 0.4),
+                    inset 0 0 20px rgba(255, 255, 255, 0.3) !important;
+                border: 3px solid rgba(255, 215, 0, 0.8) !important;
+                background: linear-gradient(135deg, 
+                    rgba(255, 215, 0, 0.3), 
+                    rgba(255, 140, 0, 0.3),
+                    rgba(255, 215, 0, 0.3)) !important;
+                transform-style: preserve-3d;
+                z-index: 10 !important;
+            }
+            
+            /* Пульсирующее свечение */
+            @keyframes pulseGlow {
+                0%, 100% {
+                    box-shadow: 
+                        0 0 20px rgba(255, 215, 0, 0.8),
+                        0 0 40px rgba(255, 215, 0, 0.6),
+                        0 0 60px rgba(255, 215, 0, 0.4),
+                        inset 0 0 20px rgba(255, 255, 255, 0.3);
+                    transform: scale(1);
+                }
+                50% {
+                    box-shadow: 
+                        0 0 30px rgba(255, 215, 0, 1),
+                        0 0 60px rgba(255, 215, 0, 0.8),
+                        0 0 90px rgba(255, 215, 0, 0.6),
+                        0 0 120px rgba(255, 215, 0, 0.4),
+                        inset 0 0 30px rgba(255, 255, 255, 0.5);
+                    transform: scale(1.05);
+                }
+            }
+            
+            /* 3D вращение */
+            @keyframes rotate3d {
+                0%, 100% {
+                    transform: perspective(400px) rotateY(0deg) rotateX(0deg);
+                }
+                25% {
+                    transform: perspective(400px) rotateY(5deg) rotateX(-5deg);
+                }
+                50% {
+                    transform: perspective(400px) rotateY(0deg) rotateX(0deg);
+                }
+                75% {
+                    transform: perspective(400px) rotateY(-5deg) rotateX(5deg);
+                }
+            }
+            
+            /* Эффект при наведении - ещё больше магии */
+            #special-day-31:hover {
+                animation: superGlow 0.6s ease-in-out infinite, rotate3dFast 1s ease-in-out infinite !important;
+                transform: scale(1.15) !important;
+                box-shadow: 
+                    0 0 40px rgba(255, 215, 0, 1),
+                    0 0 80px rgba(255, 215, 0, 0.8),
+                    0 0 120px rgba(255, 215, 0, 0.6),
+                    0 0 160px rgba(255, 215, 0, 0.4),
+                    inset 0 0 40px rgba(255, 255, 255, 0.6) !important;
+            }
+            
+            @keyframes superGlow {
+                0%, 100% {
+                    filter: brightness(1.2) saturate(1.5);
+                }
+                50% {
+                    filter: brightness(1.5) saturate(2);
+                }
+            }
+            
+            @keyframes rotate3dFast {
+                0%, 100% {
+                    transform: perspective(400px) rotateY(0deg) scale(1.15);
+                }
+                50% {
+                    transform: perspective(400px) rotateY(10deg) scale(1.15);
+                }
+            }
+            
+            /* Летающие звёздочки вокруг кнопки */
+            .day31-sparkle {
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                background: #ffd700;
+                border-radius: 50%;
+                pointer-events: none;
+                box-shadow: 0 0 10px #ffd700;
+                animation: sparkleFloat 3s ease-in-out infinite;
+            }
+            
+            @keyframes sparkleFloat {
+                0%, 100% {
+                    transform: translateY(0) translateX(0) scale(1);
+                    opacity: 1;
+                }
+                25% {
+                    transform: translateY(-20px) translateX(10px) scale(1.5);
+                    opacity: 0.7;
+                }
+                50% {
+                    transform: translateY(-30px) translateX(-10px) scale(0.8);
+                    opacity: 0.5;
+                }
+                75% {
+                    transform: translateY(-20px) translateX(15px) scale(1.2);
+                    opacity: 0.8;
+                }
+            }
+            
+            /* Радужное кольцо вокруг кнопки */
+            #special-day-31::before {
+                content: '';
+                position: absolute;
+                inset: -10px;
+                border-radius: inherit;
+                background: linear-gradient(
+                    45deg,
+                    #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3
+                );
+                opacity: 0.3;
+                animation: rainbowRotate 3s linear infinite;
+                z-index: -1;
+                filter: blur(10px);
+            }
+            
+            @keyframes rainbowRotate {
+                0% {
+                    filter: blur(10px) hue-rotate(0deg);
+                }
+                100% {
+                    filter: blur(10px) hue-rotate(360deg);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Создаём летающие звёздочки вокруг кнопки
+    createSparklesAround(day31Button);
+    
+    // Добавляем подсказку при наведении
+    day31Button.title = '🎉 ОСОБЕННЫЙ ДЕНЬ! Нажми, чтобы открыть новогоднее волшебство! 🎆';
+    
+    console.log('✨ 31 день теперь светится магически!');
+}
+
+// Создание летающих звёздочек
+function createSparklesAround(button) {
+    const sparkleCount = 8;
+    
+    for (let i = 0; i < sparkleCount; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'day31-sparkle';
+        
+        // Случайная позиция вокруг кнопки
+        const angle = (Math.PI * 2 * i) / sparkleCount;
+        const distance = 60; // расстояние от центра
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+        
+        sparkle.style.left = `calc(50% + ${x}px)`;
+        sparkle.style.top = `calc(50% + ${y}px)`;
+        sparkle.style.animationDelay = `${i * 0.2}s`;
+        
+        button.style.position = 'relative';
+        button.appendChild(sparkle);
+    }
+    
+    // Обновляем звёздочки каждые 3 секунды для случайности
+    setInterval(() => {
+        const sparkles = button.querySelectorAll('.day31-sparkle');
+        sparkles.forEach((sparkle, i) => {
+            const angle = (Math.PI * 2 * i) / sparkleCount + Math.random() * 0.5;
+            const distance = 50 + Math.random() * 20;
+            const x = Math.cos(angle) * distance;
+            const y = Math.sin(angle) * distance;
+            
+            sparkle.style.left = `calc(50% + ${x}px)`;
+            sparkle.style.top = `calc(50% + ${y}px)`;
+        });
+    }, 3000);
+}
+
+// АВТОМАТИЧЕСКАЯ ПРОВЕРКА: запускаем каждую минуту, чтобы активировать эффекты когда 31 день станет доступен
+function checkDay31Availability() {
+    const day31Button = document.querySelector('[data-day="31"]');
+    
+    if (!day31Button) return;
+    
+    // Проверяем, не активированы ли уже эффекты
+    if (day31Button.id === 'special-day-31') {
+        return; // Эффекты уже работают
+    }
+    
+    // Проверяем доступность
+    const isDisabled = day31Button.hasAttribute('disabled') || 
+                       day31Button.classList.contains('disabled') ||
+                       day31Button.style.pointerEvents === 'none';
+    
+    if (!isDisabled) {
+        // Кнопка стала доступна - включаем эффекты!
+        makeDay31Special();
+    }
+}
+
+// Запускаем проверку при загрузке страницы
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        makeDay31Special();
+    }, 500);
+});
+
+// И проверяем каждую минуту (на случай если страница была открыта до 31 декабря)
+setInterval(checkDay31Availability, 60000); // каждые 60 секунд
+
+// Также можно вызвать вручную в нужный момент:
+// makeDay31Special();
 </script>
 <div id="music-notice" class="music-notice">
   <div class="disc-wrapper">
