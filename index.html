@@ -2971,6 +2971,75 @@ function activateTimerSnow() {
     timer.appendChild(overlay);
 }
 
+function isMobileDevice() {
+    return window.innerWidth <= 1024;
+}
+
+// Получение коэффициента оптимизации
+function getOptimizationFactor() {
+    const isMobile = isMobileDevice();
+    return {
+        // Уменьшаем количество частиц
+        particleCount: isMobile ? 0.4 : 1, // 40% от оригинала на мобильных
+        // Уменьшаем размер элементов
+        sizeScale: isMobile ? 0.7 : 1,
+        // Увеличиваем интервалы между появлениями
+        intervalMultiplier: isMobile ? 2.5 : 1,
+        // Сокращаем длительность анимаций
+        durationScale: isMobile ? 0.8 : 1
+    };
+}
+
+// Защита таймера от перекрытия
+function protectTimerFromDecorations() {
+    if (!isMobileDevice()) return;
+    
+    const style = document.createElement('style');
+    style.id = 'mobile-timer-protection';
+    style.textContent = `
+        /* Защита таймера на мобильных */
+        @media (max-width: 1024px) {
+            #timer,
+            .timer-container,
+            .countdown {
+                position: relative !important;
+                z-index: 10000 !important;
+                background: rgba(0, 0, 0, 0.3);
+                padding: 10px;
+                border-radius: 10px;
+                backdrop-filter: blur(5px);
+            }
+            
+            /* Все эффекты не должны перекрывать таймер */
+            .firework-burst,
+            .gift-rain,
+            .permanent-snow,
+            .ambient-confetti,
+            .firefly,
+            .floating-gift,
+            .music-note,
+            .candy-cane,
+            .shooting-star {
+                z-index: 9990 !important;
+            }
+            
+            /* Оверлеи позади таймера */
+            .aurora-overlay,
+            .frost-overlay {
+                z-index: 1 !important;
+            }
+        }
+    `;
+    
+    if (!document.getElementById('mobile-timer-protection')) {
+        document.head.appendChild(style);
+    }
+}
+
+// Вызываем защиту таймера при загрузке
+document.addEventListener('DOMContentLoaded', protectTimerFromDecorations);
+
+
 // ============================================
 // МНОГОРАЗОВЫЕ ЭФФЕКТЫ С ПОЛНОЙ СИНХРОНИЗАЦИЕЙ
 // ============================================
@@ -3062,29 +3131,33 @@ setTimeout(() => {
 // Функции запуска многоразовых эффектов:
 
 function launchFirework() {
+    const opt = getOptimizationFactor();
+    const burstCount = Math.ceil(3 * opt.particleCount);
+    
     setTimeout(() => {
-        for (let burst = 0; burst < 3; burst++) {
+        for (let burst = 0; burst < burstCount; burst++) {
             setTimeout(() => {
                 const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
                 const x = 20 + Math.random() * 60;
-                const y = 20 + Math.random() * 40;
+                const y = isMobileDevice() ? (30 + Math.random() * 40) : (20 + Math.random() * 40); // Ниже на мобильных
+                const particleCount = Math.ceil(40 * opt.particleCount);
                 
-                for (let i = 0; i < 40; i++) {
+                for (let i = 0; i < particleCount; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'firework-burst';
                     particle.style.position = 'fixed';
                     particle.style.left = x + 'vw';
                     particle.style.top = y + 'vh';
-                    particle.style.width = '6px';
-                    particle.style.height = '6px';
+                    particle.style.width = (6 * opt.sizeScale) + 'px';
+                    particle.style.height = (6 * opt.sizeScale) + 'px';
                     particle.style.borderRadius = '50%';
                     particle.style.background = colors[Math.floor(Math.random() * colors.length)];
                     particle.style.pointerEvents = 'none';
-                    particle.style.zIndex = '9998';
+                    particle.style.zIndex = '9990';
                     document.body.appendChild(particle);
                     
-                    const angle = (Math.PI * 2 * i) / 40;
-                    const velocity = 100 + Math.random() * 100;
+                    const angle = (Math.PI * 2 * i) / particleCount;
+                    const velocity = (100 + Math.random() * 100) * opt.sizeScale;
                     const tx = Math.cos(angle) * velocity;
                     const ty = Math.sin(angle) * velocity;
                     
@@ -3092,18 +3165,21 @@ function launchFirework() {
                         { transform: 'translate(0, 0) scale(1)', opacity: 1 },
                         { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
                     ], {
-                        duration: 1000 + Math.random() * 500,
+                        duration: (1000 + Math.random() * 500) * opt.durationScale,
                         easing: 'cubic-bezier(0, 0.5, 0.5, 1)'
                     }).onfinish = () => particle.remove();
                 }
-            }, burst * 1000);
+            }, burst * (1000 * opt.intervalMultiplier));
         }
     }, 3000);
 }
 
 function launchGiftRain() {
+    const opt = getOptimizationFactor();
     const gifts = ['🎁', '🎀', '🎊'];
-    for (let i = 0; i < 30; i++) {
+    const giftCount = Math.ceil(30 * opt.particleCount);
+    
+    for (let i = 0; i < giftCount; i++) {
         setTimeout(() => {
             const gift = document.createElement('div');
             gift.className = 'gift-rain';
@@ -3111,56 +3187,63 @@ function launchGiftRain() {
             gift.style.position = 'fixed';
             gift.style.left = Math.random() * 100 + 'vw';
             gift.style.top = '-50px';
-            gift.style.fontSize = '30px';
+            gift.style.fontSize = (30 * opt.sizeScale) + 'px';
             gift.style.pointerEvents = 'none';
-            gift.style.zIndex = '9998';
+            gift.style.zIndex = '9990';
             document.body.appendChild(gift);
             
             gift.animate([
                 { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                 { transform: 'translateY(110vh) rotate(360deg)', opacity: 0.5 }
             ], {
-                duration: 3000,
+                duration: 3000 * opt.durationScale,
                 easing: 'linear'
             }).onfinish = () => gift.remove();
-        }, i * 100);
+        }, i * (100 * opt.intervalMultiplier));
     }
 }
 
 function launchConfetti() {
+    const opt = getOptimizationFactor();
     const confettiColors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#ffa500'];
-    for (let i = 0; i < 50; i++) {
+    const confettiCount = Math.ceil(50 * opt.particleCount);
+    
+    for (let i = 0; i < confettiCount; i++) {
         setTimeout(() => {
             const confetti = document.createElement('div');
             confetti.className = 'firework-burst';
             confetti.style.position = 'fixed';
             confetti.style.left = Math.random() * 100 + 'vw';
             confetti.style.top = '-20px';
-            confetti.style.width = (5 + Math.random() * 10) + 'px';
-            confetti.style.height = (5 + Math.random() * 10) + 'px';
+            confetti.style.width = ((5 + Math.random() * 10) * opt.sizeScale) + 'px';
+            confetti.style.height = ((5 + Math.random() * 10) * opt.sizeScale) + 'px';
             confetti.style.borderRadius = '50%';
             confetti.style.background = confettiColors[Math.floor(Math.random() * confettiColors.length)];
             confetti.style.pointerEvents = 'none';
-            confetti.style.zIndex = '9998';
+            confetti.style.zIndex = '9990';
             document.body.appendChild(confetti);
             
             confetti.animate([
                 { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                 { transform: `translateY(110vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
             ], {
-                duration: 3000 + Math.random() * 2000,
+                duration: (3000 + Math.random() * 2000) * opt.durationScale,
                 easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
             }).onfinish = () => confetti.remove();
-        }, i * 50);
+        }, i * (50 * opt.intervalMultiplier));
     }
 }
 
 function launchLightning() {
-    for (let i = 0; i < 5; i++) {
+    const opt = getOptimizationFactor();
+    const flashCount = Math.ceil(5 * opt.particleCount);
+    
+    for (let i = 0; i < flashCount; i++) {
         setTimeout(() => {
             const flash = document.createElement('div');
             flash.style.cssText = `
-                position: fixed; inset: 0; background: rgba(255,255,255,0.8);
+                position: fixed; inset: 0; 
+                background: rgba(255,255,255,${isMobileDevice() ? '0.6' : '0.8'});
                 pointer-events: none; z-index: 9999;
             `;
             document.body.appendChild(flash);
@@ -3171,20 +3254,29 @@ function launchLightning() {
                 { opacity: 0 },
                 { opacity: 0.6 },
                 { opacity: 0 }
-            ], { duration: 150 }).onfinish = () => flash.remove();
-        }, i * 800);
+            ], { 
+                duration: 150 * opt.durationScale 
+            }).onfinish = () => flash.remove();
+        }, i * (800 * opt.intervalMultiplier));
     }
 }
 
 function launchStarfall() {
-    for (let i = 0; i < 20; i++) {
+    const opt = getOptimizationFactor();
+    const starCount = Math.ceil(20 * opt.particleCount);
+    
+    for (let i = 0; i < starCount; i++) {
         setTimeout(() => {
             const star = document.createElement('div');
             star.textContent = '⭐';
+            star.className = 'shooting-star';
             star.style.cssText = `
-                position: fixed; left: ${Math.random() * 100}vw; top: -30px;
-                font-size: ${15 + Math.random() * 20}px; pointer-events: none;
-                z-index: 9998;
+                position: fixed; 
+                left: ${Math.random() * 100}vw; 
+                top: -30px;
+                font-size: ${(15 + Math.random() * 20) * opt.sizeScale}px; 
+                pointer-events: none;
+                z-index: 9990;
             `;
             document.body.appendChild(star);
             
@@ -3192,24 +3284,30 @@ function launchStarfall() {
                 { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                 { transform: `translateY(110vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
             ], { 
-                duration: 2000 + Math.random() * 1000,
+                duration: (2000 + Math.random() * 1000) * opt.durationScale,
                 easing: 'ease-in'
             }).onfinish = () => star.remove();
-        }, i * 150);
+        }, i * (150 * opt.intervalMultiplier));
     }
 }
 
 function launchBalloons() {
+    const opt = getOptimizationFactor();
     const balloons = ['🎈', '🎈', '🎈'];
+    const balloonCount = Math.ceil(15 * opt.particleCount);
     
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < balloonCount; i++) {
         setTimeout(() => {
             const balloon = document.createElement('div');
             balloon.textContent = balloons[Math.floor(Math.random() * balloons.length)];
             balloon.style.cssText = `
-                position: fixed; left: ${Math.random() * 100}vw; bottom: -50px;
-                font-size: ${25 + Math.random() * 20}px; pointer-events: none;
-                z-index: 9998; filter: hue-rotate(${Math.random() * 360}deg);
+                position: fixed; 
+                left: ${Math.random() * 100}vw; 
+                bottom: -50px;
+                font-size: ${(25 + Math.random() * 20) * opt.sizeScale}px; 
+                pointer-events: none;
+                z-index: 9990; 
+                filter: hue-rotate(${Math.random() * 360}deg);
             `;
             document.body.appendChild(balloon);
             
@@ -3217,10 +3315,10 @@ function launchBalloons() {
                 { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                 { transform: `translateY(-120vh) translateX(${(Math.random()-0.5)*100}px) rotate(${Math.random() * 360}deg)`, opacity: 0.5 }
             ], {
-                duration: 4000 + Math.random() * 2000,
+                duration: (4000 + Math.random() * 2000) * opt.durationScale,
                 easing: 'ease-out'
             }).onfinish = () => balloon.remove();
-        }, i * 200);
+        }, i * (200 * opt.intervalMultiplier));
     }
 }
 
@@ -3405,6 +3503,42 @@ function updateTimer(){
     const s = String(Math.floor((diff / 1000) % 60)).padStart(2,'0');
     timerEl.textContent = `${d}д ${h}ч ${m}м ${s}с`;
 }
+
+// ============================================
+// МОНИТОРИНГ ПРОИЗВОДИТЕЛЬНОСТИ
+// ============================================
+
+// Автоматическое снижение эффектов при лагах
+let performanceMode = false;
+
+function checkPerformance() {
+    if (!isMobileDevice()) return;
+    
+    const effectCount = document.querySelectorAll('.firework-burst, .gift-rain, .ambient-confetti, .shooting-star').length;
+    
+    // Если слишком много эффектов одновременно - включаем экстра-оптимизацию
+    if (effectCount > 50 && !performanceMode) {
+        performanceMode = true;
+        console.log('⚠️ Performance mode activated');
+        
+        // Удаляем половину старых эффектов
+        const effects = document.querySelectorAll('.firework-burst, .gift-rain, .ambient-confetti, .shooting-star');
+        effects.forEach((el, i) => {
+            if (i % 2 === 0) el.remove();
+        });
+    } else if (effectCount < 20 && performanceMode) {
+        performanceMode = false;
+        console.log('✅ Performance mode deactivated');
+    }
+}
+
+// Проверяем производительность каждые 2 секунды
+setInterval(checkPerformance, 2000);
+
+console.log('🎉 Mobile optimization loaded!', {
+    isMobile: isMobileDevice(),
+    optimization: getOptimizationFactor()
+});
 
 // ФУНКЦИЯ ПРАЗДНОВАНИЯ НОВОГО ГОДА
 function startNewYearCelebration() {
